@@ -41,7 +41,7 @@
 #  age_size_ipm <- init_ipm(sim_gen    = "general",
 #                           di_dd      = "di",
 #                           det_stoch  = "det",
-#                           has_age    = TRUE) %>%
+#                           uses_age    = TRUE) %>%
 #    define_kernel(
 #      name          = "P_age",
 #      family        = "CC",
@@ -51,8 +51,8 @@
 #      mu_g_age      = grow_int + grow_z * wt_1 + grow_a * age,
 #      data_list     = param_list,
 #      states        = list(c("wt")),
-#      has_hier_effs = FALSE,
-#      levels_ages   = list(age = c(0:20), max_age = 21),
+#      uses_par_sets = FALSE,
+#      age_indices   = list(age = c(0:20), max_age = 21),
 #      evict_cor     = FALSE
 #    )
 #  
@@ -72,8 +72,8 @@
 #      rcsz_mu       = rcsz_int + rcsz_z * wt_1,
 #      data_list     = param_list,
 #      states        = list(c("wt")),
-#      has_hier_effs = FALSE,
-#      levels_ages   = list(age = c(0:20), max_age = 21),
+#      uses_par_sets = FALSE,
+#      age_indices   = list(age = c(0:20), max_age = 21),
 #      evict_cor     = FALSE
 #    )
 #  

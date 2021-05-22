@@ -3,7 +3,7 @@
 # name/content
 
 # These should only appear in .make_age_k_row(...). "others" object is treated
-# just like any other hierarchical model, for now. This will require modification
+# just like any other par_setarchical model, for now. This will require modification
 # for more complicated models like density dependent and/or time lagged ones
 # where vital rates in the sub-kernels themselves definitely will require the
 # t_minus_1 or n_minus_1 notation.
@@ -26,7 +26,7 @@
 
 #' @noRd
 
-.expand_ages <- function(x, ages) {
+.expand_age_kern_forms <- function(x, ages) {
 
   if(is.character(x)) x <- rlang::parse_expr(x)
 
@@ -49,7 +49,7 @@
 
   forms <- k_row$params[[1]]$formula
 
-  ages  <- k_row$levels_ages %>%
+  ages  <- k_row$age_indices %>%
     .flatten_to_depth(1L)
 
   calls <- vapply(forms,
@@ -61,9 +61,9 @@
                   }, character(1L))
 
   # In the case where we have an n_0 = f_1 %*% n_1 + f_2 %*% n_2 etc,
-  # We need to treat this differently from other hier_effs. Normally, they
-  # get one call per level of the hier_eff. in this case, we need one call
-  # expanded to include all levels of the hier_eff. This is done w/ methods
+  # We need to treat this differently from other par_sets. Normally, they
+  # get one call per level of the par_set_eff. in this case, we need one call
+  # expanded to include all levels of the par_set_eff. This is done w/ methods
   # for generics sum and prod (and maybe others later).
   # On the other hand, we also need to generate one expression
   # for each n_x_t_1 = p_x_minus_1 %*% n_x_minus_1_t
@@ -78,7 +78,7 @@
     n_0_form <- lapply(
       n_0_call,
       function(x, ages) {
-        .expand_ages(x, ages)
+        .expand_age_kern_forms(x, ages)
 
       },
       ages = ages
@@ -218,13 +218,13 @@
 
 
 #' @noRd
-# Basically .split_hier_effs, but uses the age column instead of hier_effs column
+# Basically .split_par_sets, but uses the age column instead of par_sets column
 
 .split_sub_kern_ages <- function(proto_ipm) {
 
-  kerns <- which(proto_ipm$has_age)
+  kerns <- which(proto_ipm$uses_age)
 
-  # Create a place to hold the output - either kernels with no hierarchical effects
+  # Create a place to hold the output - either kernels with no parameter sets
   # or a new proto
   if(length(kerns) != dim(proto_ipm)[1]) {
 
@@ -236,21 +236,21 @@
 
   }
 
-  hier_rows <- proto_ipm[kerns, ]
+  par_set_rows <- proto_ipm[kerns, ]
 
-  for(i in seq_len(dim(hier_rows)[1])) {
+  dup_test  <- gsub("(_age)|(_max_age)", "", par_set_rows$kernel_id)
 
-    levs   <- hier_rows$levels_ages[[i]]
+  is_duped  <- duplicated(dup_test) | duplicated(dup_test, fromLast = TRUE)
 
-    # Combine the max age w/ the others if it is supplied. This only
-    # applies to iteration kernel expressions (I think).
+  for(i in seq_len(dim(par_set_rows)[1])) {
+
+    levs   <- par_set_rows$age_indices[[i]]
 
     levs   <- list(age = unlist(levs, use.names = FALSE))
 
-    levels <- lapply(levs, eval) %>%
-      expand.grid(stringsAsFactors = FALSE)
+    levels <- lapply(levs, eval)
 
-    temp   <- .expand_hier_effs(hier_rows[i, ], levels)
+    temp   <- .expand_age_sub_kerns(par_set_rows[i, ], levels, is_duped[i])
 
     out    <- rbind(out, temp)
 
@@ -259,3 +259,181 @@
   return(out)
 
 }
+
+
+.expand_age_sub_kerns <- function(rows, ages, is_duped) {
+
+  # Place holder, this will ultimately get rbind'ed
+  new_proto <- rows[0, ]
+
+  for(i in seq_len(dim(rows)[1])) {
+
+    targ_val  <- .get_age_targets_values(rows[i, ], ages, is_duped)
+
+    temp      <- .expand_proto(rows, data.frame(age = targ_val$use_ages), i)
+
+    for_bind  <- .sub_age(temp, targ_val$use_ages, targ_val$target)
+
+    new_proto <- rbind(new_proto, for_bind)
+
+  }
+
+  return(new_proto)
+}
+
+#' @noRd
+# Function to partition age values correctly across kernels. In the case
+# where P_a is defined by P_a AND P_max_a, we want to make sure P_a is defined
+# for a < max_a, and P_max_a for a == max_a. On the other hand, if F_a is defined
+# identically for all a, then that should use all a for substitution.
+
+.get_age_targets_values <- function(rows, ages, is_duped) {
+
+
+  if(grepl("max_age", rows$kernel_id)){
+
+    use_ages <- max(ages$age)
+
+    target <- "max_age"
+
+  } else if(!grepl("max_age", rows$kernel_id) & is_duped) {
+
+    use_ages <- ages$age[-which.max(ages$age)]
+
+    target   <- "age"
+
+  } else {
+
+    use_ages <- ages$age
+
+    target   <- "age"
+
+  }
+
+  return(list(use_ages = use_ages,
+              target   = target))
+}
+
+.sub_age <- function(proto, use_ages, target) {
+
+  it <- 1
+
+  # the target in the vital rate expressions should be either "age" or "max_age".
+  # however, pop state should  really always be "age".
+
+  nm    <- target
+  ps_nm <- "age"
+
+  for(i in seq_along(use_ages)) { # variable names loop
+
+    proto[it, 'kernel_id']  <- gsub(nm,
+                                    use_ages[i],
+                                    proto[it, 'kernel_id'])
+
+      # Kernels with multiple population vectors require a named list of
+      # `formula`, whereas single population vectors will just be a scalar
+      # that is then turned back into a later on
+
+      if(is.list(proto$params[[it]]$formula)) {
+        proto$params[[it]]$formula <- purrr::map(
+          proto$params[[it]]$formula,
+          .f = function(x, level, nm) {
+
+            gsub(nm, level, x)
+
+          },
+          level = use_ages[i],
+          nm    = nm
+        )
+
+        names(proto$params[[it]]$formula) <- purrr::map_chr(
+          names(proto$params[[it]]$formula),
+          .f = function(x, level, nm) {
+
+            gsub(nm, level, x)
+
+          },
+          level = use_ages[i],
+          nm = nm
+
+        )
+
+      } else {
+
+        proto$params[[it]]$formula <- gsub(
+          nm,
+          use_ages[i],
+          proto$params[[it]]$formula
+        )
+
+      }
+
+      proto$params[[it]]$vr_text <- purrr::map(
+        proto$params[[it]]$vr_text,
+        .f = function(x, level, nm) {
+
+          gsub(nm, level, x)
+
+        },
+        level = use_ages[i],
+        nm = nm
+      )
+
+
+      names(proto$pop_state[[it]])      <- purrr::map_chr(
+        names(proto$pop_state[[it]]),
+        .f = function(x, level, nm) {
+          gsub(nm, level, x)
+        },
+        level = use_ages[i],
+        nm = ps_nm
+      )
+
+
+      # We want a character VECTOR of names, not a list. Hence the map_chr instead
+      # of standard purrr::map here
+
+      names(proto$params[[it]]$vr_text) <- purrr::map_chr(
+        names(proto$params[[it]]$vr_text),
+        .f = function(x, level, nm) {
+          gsub(nm, level, x)
+        },
+        level = use_ages[i],
+        nm = nm
+      )
+
+
+      # Case when multiple parameter sets exist. The first iteration peels
+      # off a layer of list from the quosure, so we need to make sure we don't
+      # grab that at the second time of asking.
+
+      if(i > 1) {
+        use_ev_fun <- proto$evict_fun[[it]]
+      } else {
+        use_ev_fun <- proto$evict_fun[[it]][[1]]
+      }
+
+      temp <- rlang::quo_text(use_ev_fun) %>%
+        gsub(pattern = nm, replacement = use_ages[i], x = .) %>%
+        rlang::parse_expr()
+
+
+      proto$evict_fun[[it]]   <-  rlang::enquo(temp)
+
+      names(proto$params)[it] <- gsub(nm,
+                                      use_ages[i],
+                                      names(proto$params)[it])
+
+
+      if(it == length(use_ages)) {
+        it <- 1
+      } else {
+        it <- it + 1
+      }
+
+    } # end ages names loop
+
+  return(proto)
+}
+
+

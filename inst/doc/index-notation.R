@@ -7,8 +7,8 @@ styles <- c("style='width:150%;'")
 knitr::kable(
   data.frame(
 
-    Math    = c("$\\mu_g^{yr} = \\alpha_g + \\alpha_g^{yr} * \\beta_g * z$",
-                         "$g(z',z) = f_g(\\mu_g^{yr}, \\sigma_g)$",
+    Math    = c("$\\mu_G^{yr} = \\alpha_G + \\alpha_G^{yr} * \\beta_G * z$",
+                         "$G(z',z) = f_G(z', \\mu_g^{yr}, \\sigma_G)$",
                 "$Logit(\\mu_{s}^{plot,yr}) = \\alpha_s + \\alpha_{s}^{plot,yr} + \\beta * z$",
                 "",
                 "",
@@ -147,14 +147,14 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #                    kern_param = "kern") %>%
 #    define_kernel(
 #  
-#      # _yr is appended as a suffix with an underscore. Notice how the formula
-#      # from 2 is translated into the formula argument and the kernel name
+#      # The _yr index is appended as a suffix with an underscore. Notice how the formula
+#      # from Eq 2 is translated into the formula argument and the kernel name
 #  
 #      name             = "P_yr",
 #      family           = "CC",
 #      formula          = s_yr * g_yr,
 #  
-#      # We also modify each parameter name with a suffix as well.
+#      # We also modify each parameter name is indexed as well.
 #      # Here, I've split out the linear predictor and the inverse logit
 #      # transformation into separate steps to avoid over cluttering
 #  
@@ -169,14 +169,14 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      data_list        = all_params,
 #      states           = list(c("z")),
 #  
-#      # We signal that the kernel has hierarchical effects
+#      # We signal that the kernel has parameter sets
 #  
-#      has_hier_effs    = TRUE,
+#      uses_par_sets    = TRUE,
 #  
-#      # And provide the values that each suffix can take as a named list.
-#      # The name(s) in this list MUST match the suffix used in the expressions.
+#      # And provide the values that each index can take as a named list.
+#      # The name(s) in this list MUST match the index used in the expressions.
 #  
-#      levels_hier_effs = list(yr = 2001:2006),
+#      par_set_indices = list(yr = 2001:2006),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "g_yr")
 #    ) %>%
@@ -194,7 +194,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      r_d           = dnorm(z_2, mu_r_d, sigma_r_d),
 #      data_list     = all_params,
 #      states        = list(c("z")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    ) %>%
@@ -339,8 +339,8 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      g_site           = dnorm(z_2, mu_g_site, sigma_g),
 #      data_list        = all_pars,
 #      states           = list(c("z")),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(site = LETTERS[1:6]),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(site = LETTERS[1:6]),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "g_site")
 #    ) %>%
@@ -360,8 +360,8 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      c_d              = dnorm(z_2, mu_c_d, sigma_c_d),
 #      data_list        = all_pars,
 #      states           = list(c("z", "sb1", "sb2")),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(site = LETTERS[1:6]),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(site = LETTERS[1:6]),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "c_d")
 #      ) %>%
@@ -380,8 +380,8 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #                             beta_c_r_temp * temp),
 #      data_list        = all_pars,
 #      states           = list(c("z", "sb1")),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(site = LETTERS[1:6]),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(site = LETTERS[1:6]),
 #      evict_cor        = FALSE
 #    ) %>%
 #    define_kernel(
@@ -390,7 +390,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      formula       = s_sb1 * (1 - r_sb1),
 #      data_list     = all_pars,
 #      states        = list(c("sb1", "sb2")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = FALSE
 #    ) %>%
 #    define_kernel(
@@ -400,7 +400,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
 #      data_list     = all_pars,
 #      states        = list(c("z", "sb1")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "c_d")
 #    ) %>%
@@ -411,7 +411,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #      c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
 #      data_list     = all_pars,
 #      states        = list(c("z", "sb2")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "c_d")
 #    ) %>%

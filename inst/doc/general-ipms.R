@@ -62,7 +62,7 @@
 #      s             = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
 #      data_list     = data_list,
 #      states        = list(c('ht')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'g')
@@ -82,7 +82,7 @@
 #      # "creates" seeds entering the seedbank
 #  
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE
+#      uses_par_sets = FALSE
 #    ) %>%
 #    define_kernel(
 #      name    = 'stay_discrete',
@@ -120,7 +120,7 @@
 #      # Again, we need to add "b" to the states list
 #  
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'r_d')
@@ -225,6 +225,8 @@
 #  
 #    I     <- diag(nrow(P))
 #    N     <- solve(I - P)
+#  
+#    return(N)
 #  }
 #  
 #  eta_bar <- function(ipm) {
@@ -240,7 +242,7 @@
 #  
 #    N     <- make_N(ipm)
 #  
-#    out <- colSums(2 * N %^% 2L - N) - colSums(N) ^ 2
+#    out <- colSums(2 * (N %^% 2L) - N) - colSums(N) ^ 2
 #  
 #    return(as.vector(out))
 #  }
@@ -326,9 +328,9 @@
 #                                     kern_param = "kern") %>%
 #    define_kernel(
 #  
-#      # The kernel name gets a _year added to it to denote that there
+#      # The kernel name gets indexed by _year to denote that there
 #      # are multiple possible kernels we can build with our parameter set.
-#      # The _year gets substituted by the names of the possible levels in the
+#      # The _year gets substituted by the values in "par_set_indices" in the
 #      # output, so in this example we will have P_1, P_2, P_3, P_4, and P_5
 #  
 #      name          = "P_year",
@@ -347,11 +349,11 @@
 #      data_list        = all_params,
 #      states           = list(c('ht')),
 #  
-#      # We set has_hier_effs to TRUE, signalling that we want to expand these
-#      # expressions across all levels of levels_hier_effs.
+#      # We set uses_par_sets to TRUE, signalling that we want to expand these
+#      # expressions across all levels of par_set_indices.
 #  
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(year = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(year = 1:5),
 #      evict_cor        = TRUE,
 #  
 #      # we also add the suffix to `target` here, because the value modified by
@@ -362,7 +364,7 @@
 #    ) %>%
 #    define_kernel(
 #  
-#      # again, we append the suffix to the kernel name, vital rate expressions,
+#      # again, we append the index to the kernel name, vital rate expressions,
 #      # and in the model formula.
 #  
 #      name          = "go_discrete_year",
@@ -376,13 +378,12 @@
 #      r_s_year      = exp(r_s_int_year + r_s_slope * ht_1),
 #      data_list     = all_params,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(year = 1:5)
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(year = 1:5)
 #    ) %>%
 #    define_kernel(
 #  
-#      # This kernel has no time-varying parameters, and so does not require a suffix
-#      # appended to it.
+#      # This kernel has no time-varying parameters, and so is not indexed.
 #  
 #      name    = 'stay_discrete',
 #  
@@ -399,12 +400,12 @@
 #      # This kernel has no time-varying parameters, so we don't need to designate
 #      # it as such.
 #  
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor = FALSE
 #    ) %>%
 #    define_kernel(
 #  
-#      # This kernel also doesn't get a suffix, because there are no varying parameters.
+#      # This kernel also doesn't get a index, because there are no varying parameters.
 #  
 #      name          = 'leave_discrete',
 #      formula       = e_p * r_d * d_ht,
@@ -412,7 +413,7 @@
 #      family        = 'DC',
 #      data_list     = all_params,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'r_d')
@@ -453,7 +454,7 @@
 ## ----eval = FALSE-------------------------------------------------------------
 #  
 #  mean_kernels <- mean_kernel(general_stoch_kern_ipm)
-#  lam_s        <- lambda(general_stoch_kern_ipm)
+#  lam_s        <- lambda(general_stoch_kern_ipm, burn_in = 0.15) # Remove first 15% of iterations
 #  
 
 ## ----eval = FALSE-------------------------------------------------------------
@@ -503,23 +504,24 @@
 #  sample_env <- function(env_params) {
 #  
 #    # We generate one value for each covariate per iteration, and return it
-#    # as a named list. We can reference the names in this list in vital rate
-#    # expressions.
+#    # as a named list.
 #  
-#    temp <- rnorm(1,
-#                  env_params$temp_mu,
-#                  env_params$temp_sd)
+#    temp_now <- rnorm(1,
+#                      env_params$temp_mu,
+#                      env_params$temp_sd)
 #  
-#    precip <- rgamma(1,
-#                     shape = env_params$precip_shape,
-#                     rate = env_params$precip_rate)
+#    precip_now <- rgamma(1,
+#                         shape = env_params$precip_shape,
+#                         rate = env_params$precip_rate)
 #  
-#    out        <- list(temp = temp, precip = precip)
+#    # The vital rate expressions can now use the names "temp" and "precip"
+#    # as if they were in the data_list.
+#  
+#    out        <- list(temp = temp_now, precip = precip_now)
 #  
 #    return(out)
 #  
 #  }
-#  
 #  
 #  # Again, we can define our own functions and pass them into calls to make_ipm. This
 #  # isn't strictly necessary, but can make the model code more readable/less error prone.
@@ -533,9 +535,9 @@
 ## ----eval = FALSE-------------------------------------------------------------
 #  
 #  general_stoch_param_model <- init_ipm(sim_gen    = "general",
-#                                     di_dd      = "di",
-#                                     det_stoch  = "stoch",
-#                                     kern_param = "param") %>%
+#                                        di_dd      = "di",
+#                                        det_stoch  = "stoch",
+#                                        kern_param = "param") %>%
 #    define_kernel(
 #      name       = "P_stoch",
 #      family     = "CC",
@@ -557,7 +559,7 @@
 #  
 #      data_list     = constant_params,
 #      states        = list(c("surf_area")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "g")
 #    ) %>%
@@ -572,7 +574,7 @@
 #      c_d           = dnorm(surf_area_2, c_d_mu, c_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c("surf_area")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "c_d")
 #    ) %>%
@@ -591,7 +593,7 @@
 #      c_s           = exp(c_s_int + c_s_slope * surf_area_1),
 #      data_list     = constant_params,
 #      states        = list(c("surf_area", "sb")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #  
 #      # There is not eviction to correct here, so we can set this to false
 #  
@@ -603,7 +605,7 @@
 #      formula       = r_s * r_r,
 #      data_list     = constant_params,
 #      states        = list("sb"),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = FALSE
 #    ) %>%
 #    define_kernel(
@@ -613,7 +615,7 @@
 #      c_d           = dnorm(surf_area_2, c_d_mu, c_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c("surf_area", "sb")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "c_d")
 #    ) %>%
@@ -663,7 +665,7 @@
 #  
 #  
 #  # in the second version, sample_env is provided in the usr_funs list of
-#  # make_ipm(). These two vesrions are equivalent.
+#  # make_ipm(). These two versions are equivalent.
 #  
 #  general_stoch_param_ipm <-  define_env_state(
 #    proto_ipm  = general_stoch_param_model,
@@ -746,7 +748,7 @@
 #      s             = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
 #      data_list     = data_list,
 #      states        = list(c('ht')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'g')
@@ -759,7 +761,7 @@
 #      r_s           = exp(r_s_int + r_s_slope * ht_1),
 #      data_list     = data_list,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE
+#      uses_par_sets = FALSE
 #    ) %>%
 #    define_kernel(
 #      name      = 'stay_discrete',
@@ -775,7 +777,7 @@
 #      family        = 'DC',
 #      data_list     = data_list,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'r_d')
@@ -894,8 +896,8 @@
 #      s                = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
 #      data_list        = all_params,
 #      states           = list(c('ht')),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(year = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(year = 1:5),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions('norm',
 #                                                 'g_year')
@@ -908,15 +910,15 @@
 #      f_s_year      = exp(f_s_int_year + f_s_slope * ht_1),
 #      data_list     = all_params,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(year = 1:5)
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(year = 1:5)
 #    ) %>%
 #    define_kernel(
 #      name    = 'stay_discrete',
 #      formula = 0,
 #      family  = "DD",
 #      states  = list(c('b')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor = FALSE
 #    ) %>%
 #    define_kernel(
@@ -926,7 +928,7 @@
 #      family        = 'DC',
 #      data_list     = all_params,
 #      states        = list(c('ht', "b")),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions('norm',
 #                                              'f_d')

@@ -26,7 +26,14 @@
     </style>
 
 
-<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
@@ -175,16 +182,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="mathematical-overview-of-the-example" class="section level3">
 <h3>Mathematical overview of the example</h3>
-<p>This example will use an IPM for <em>Ligustrum obtusifolium</em>, a tree species that is now invasive in North America. Data were collected outside of St. Louis, Missouri, and the full model is described in <a href="https://esajournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fecy.2681&amp;file=ecy2681-sup-0002-MetadataS1.pdf">Levin et al. 2019</a>. The IPM consists of a single discrete stage (seed bank, abbreviated <code>b</code>) and a single continuous state (height, abbreviated <code>ht</code>/<span class="math inline">\(z,z&#39;\)</span>). Reproduction is time-lagged so all seeds must enter the seed bank. They can either germinate in the next year, or they can die (so <code>stay_discrete</code> = 0). Thus, the full model takes the following form:</p>
+<p>This example will use an IPM for <em>Ligustrum obtusifolium</em>, a tree species that is now invasive in North America. Data were collected outside of St. Louis, Missouri, and the full model is described in <a href="https://esajournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fecy.2681&amp;file=ecy2681-sup-0002-MetadataS1.pdf">Levin et al. 2019</a>. The IPM consists of a single discrete stage (seed bank, abbreviated <code>b</code>) and a single continuous state (height, abbreviated <code>ht</code>/<span class="math inline">\(z,z&#39;\)</span>). The census timing was such that all seeds must enter the seed bank. They can either germinate in the next year, or they can die (so <code>stay_discrete</code> = 0). Thus, the full model takes the following form:</p>
 <ol style="list-style-type: decimal">
 <li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P(z&#39;, z) n(z,t)d\mathrm{z} + b(t) * \int_L^U leave\_discrete(z&#39;) \mathrm{dz&#39;}\)</span></p></li>
 <li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete(z) n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
-<li><p><span class="math inline">\(P(z&#39;,z) = s(z) * g(z&#39;,z)\)</span></p></li>
+<li><p><span class="math inline">\(P(z&#39;,z) = s(z) * G(z&#39;,z)\)</span></p></li>
 <li><p><span class="math inline">\(go\_discrete(z) = f_s(z) * f_r(z) * g_i\)</span></p></li>
 <li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p * f_d(z&#39;)\)</span></p></li>
 <li><p><span class="math inline">\(stay\_discrete = 0\)</span></p></li>
 </ol>
-<p><span class="math inline">\(f_g\)</span> and <span class="math inline">\(f_{r_d}\)</span> denote normal probability density functions. The vital rates functions and example code to fit them are:</p>
+<p><span class="math inline">\(f_G\)</span> and <span class="math inline">\(f_{r_d}\)</span> denote Normal probability density functions. The vital rates functions and example code to fit them are:</p>
 <ol style="list-style-type: decimal">
 <li><p>survival (<code>s</code>): A logistic regression with a squared term</p>
 <ul>
@@ -196,8 +203,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>example code: <code>lm(ht_2 ~ ht_1, data = grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(\mu_g = \alpha_g + \beta_g * z\)</span></p></li>
-<li><p><span class="math inline">\(g(z&#39;,z) = f_g(\mu_g, \sigma_g)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_G = \alpha_G + \beta_G * z\)</span></p></li>
+<li><p><span class="math inline">\(G(z&#39;,z) = f_G(\mu_G, \sigma_G)\)</span></p></li>
 </ul></li>
 </ul></li>
 <li><p>flowering probability (<code>r_r</code>): A logistic regression</p>
@@ -281,7 +288,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">s             =</span> <span class="fu">inv_logit_2</span>(s_int, s_slope, s_slope_2, ht_1),</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>)),</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;g&#39;</span>)</span>
@@ -301,7 +308,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># &quot;creates&quot; seeds entering the seedbank</span></span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span></span>
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">name    =</span> <span class="st">&#39;stay_discrete&#39;</span>,</span>
@@ -339,7 +346,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Again, we need to add &quot;b&quot; to the states list</span></span>
 <span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
@@ -434,51 +441,54 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  I     <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">nrow</span>(P))</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">solve</span>(I <span class="sc">-</span> P)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>eta_bar <span class="ot">&lt;-</span> <span class="cf">function</span>(ipm) {</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">make_N</span>(ipm)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  out   <span class="ot">&lt;-</span> <span class="fu">colSums</span>(N)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.vector</span>(out))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(N)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>eta_bar <span class="ot">&lt;-</span> <span class="cf">function</span>(ipm) {</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">make_N</span>(ipm)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  out   <span class="ot">&lt;-</span> <span class="fu">colSums</span>(N)</span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>sigma_eta <span class="ot">&lt;-</span> <span class="cf">function</span>(ipm) {</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">make_N</span>(ipm)  </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="dv">2</span> <span class="sc">*</span> N <span class="sc">%^%</span> 2L <span class="sc">-</span> N) <span class="sc">-</span> <span class="fu">colSums</span>(N) <span class="sc">^</span> <span class="dv">2</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.vector</span>(out))</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>mean_l <span class="ot">&lt;-</span> <span class="fu">eta_bar</span>(general_ipm)</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>var_l  <span class="ot">&lt;-</span> <span class="fu">sigma_eta</span>(general_ipm)</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>mesh_ps <span class="ot">&lt;-</span> <span class="fu">int_mesh</span>(general_ipm)<span class="sc">$</span>ht_1 <span class="sc">%&gt;%</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.vector</span>(out))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>sigma_eta <span class="ot">&lt;-</span> <span class="cf">function</span>(ipm) {</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  N     <span class="ot">&lt;-</span> <span class="fu">make_N</span>(ipm)  </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="dv">2</span> <span class="sc">*</span> (N <span class="sc">%^%</span> 2L) <span class="sc">-</span> N) <span class="sc">-</span> <span class="fu">colSums</span>(N) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.vector</span>(out))</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>mean_l <span class="ot">&lt;-</span> <span class="fu">eta_bar</span>(general_ipm)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>var_l  <span class="ot">&lt;-</span> <span class="fu">sigma_eta</span>(general_ipm)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>mesh_ps <span class="ot">&lt;-</span> <span class="fu">int_mesh</span>(general_ipm)<span class="sc">$</span>ht_1 <span class="sc">%&gt;%</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, mean_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, var_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span></code></pre></div>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, mean_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, var_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span></code></pre></div>
 <p>From prior knowledge, we happen to know that even in the best conditions, <em>Ligustrum obtusifolium</em> individuals usually only live 25-50 years. It appears that our model (wildly) overestimates their average lifespan, and we’d want to think about how to re-parameterize it to more accurately capture mortality events. Our survival model would seem the most likely candidate for re-examination, particularly for young and mid-sized trees. That is a problem for another day though, and so the next section will investigate how to implement general IPMs in discretely varying environments.</p>
 </div>
 </div>
 <div id="general-models-for-discretely-varying-environments" class="section level2">
 <h2>General models for discretely varying environments</h2>
 <p>Discretely varying parameters can be used to construct general IPMs with little additional effort. These are typically the result of fitting a set of fixed effects vital rate models that include both continuous predictors for size/state and categorical variables like treatment or maturation state. They can also result from mixed effects models, for example, working with conditional modes for a random intercept corresponding to year or site.</p>
+<p><code>ipmr</code> refers to these as <em>parameter sets</em>, and abbreviates them <code>par_sets</code>. For example, a random intercept for year may be denoted <span class="math inline">\(\alpha_{yr}\)</span>, where <span class="math inline">\(_{yr}\)</span> provides an index for the different values that <span class="math inline">\(\alpha\)</span> can take on.</p>
 <p>If you’ve already read the Intro to <code>ipmr</code> article and the example above, then there aren’t any new concepts to introduce here. Below is an example showing how all of these come together.</p>
 <div id="mathematical-overview-of-the-example-1" class="section level3">
 <h3>Mathematical overview of the example</h3>
-<p>We’ll use a variation of the model above, simulating some random year-specific intercepts for growth and seed production. Parameters, functions, and kernels that are now time varying have a superscript, <span class="math inline">\(yr\)</span> appended to them.</p>
+<p>We’ll use a variation of the model above, simulating some random year-specific intercepts for growth and seed production. Parameters, functions, and kernels that are now time varying have a subscript <span class="math inline">\(x_{yr}\)</span> appended to them.</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P^{yr}(z&#39;, z) n(z,t)d\mathrm{z} + b(t) * \int_L^U leave\_discrete(z&#39;) \mathrm{dz&#39;}\)</span></p></li>
-<li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete^{yr}(z) n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
-<li><p><span class="math inline">\(P^{yr}(z&#39;,z) = s(z) * g^{yr}(z&#39;,z)\)</span></p></li>
-<li><p><span class="math inline">\(go\_discrete^{yr}(z) = r_s^{yr}(z) * r_r(z) * g_i\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P_{yr}(z&#39;, z) n(z,t)d\mathrm{z} + b(t) * \int_L^U leave\_discrete(z&#39;) \mathrm{dz&#39;}\)</span></p></li>
+<li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete_{yr}(z) n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
+<li><p><span class="math inline">\(P_{yr}(z&#39;,z) = s(z) * G_{yr}(z&#39;,z)\)</span></p></li>
+<li><p><span class="math inline">\(go\_discrete_{yr}(z) = r_{s,yr}(z) * r_r(z) * g_i\)</span></p></li>
 <li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p * r_d(z&#39;)\)</span></p></li>
 <li><p><span class="math inline">\(stay\_discrete = 0\)</span></p></li>
 </ol>
@@ -489,13 +499,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Example code: <code>glm(surv ~ ht_1, data = my_surv_data, family = binomial())</code></p></li>
 <li><p>Mathematical form: <span class="math inline">\(Logit(s(z)) = \alpha_s + \beta_{s,1} * z + \beta_{s,2} * z^2\)</span></p></li>
 </ul></li>
-<li><p>growth (<code>g</code>): A linear mixed effects regression. <span class="math inline">\(f_g\)</span> denotes a normal probability density function.</p>
+<li><p>growth (<code>g</code>): A linear mixed effects regression. <span class="math inline">\(f_G\)</span> denotes a normal probability density function.</p>
 <ul>
 <li><p>example code: <code>lmer(ht_2 ~ ht_1 + (1 | year), data = grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(\mu_g^{yr} = \alpha_g + \alpha_{g}^{yr} + \beta_g * z\)</span></p></li>
-<li><p><span class="math inline">\(g^{yr}(z&#39;,z) = f_g(\mu_g^{yr}, \sigma_g)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_{G,yr} = \alpha_G + \alpha_{G,yr} + \beta_G * z\)</span></p></li>
+<li><p><span class="math inline">\(G_{yr}(z&#39;,z) = f_G(z&#39;, \mu_{G,yr}, \sigma_G)\)</span></p></li>
 </ul></li>
 </ul></li>
 <li><p>flowering probability (<code>r_r</code>): A logistic regression</p>
@@ -506,12 +516,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>seed production (<code>r_s</code>): A Poisson mixed effects regression</p>
 <ul>
 <li><p>example code: <code>glmer(seeds ~ ht_1 + (1 | year), data = my_seed_data, family = poisson())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Log(r_s^{yr}(z)) = \alpha_{r_s} + \alpha_{r_s}^{yr} + \beta_{r_s} * z\)</span></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Log(r_{s,yr}(z)) = \alpha_{r_s} + \alpha_{r_s, yr} + \beta_{r_s} * z\)</span></p></li>
 </ul></li>
 <li><p>Recruit size distribution (<code>r_d</code>): A normal distribution (<span class="math inline">\(f_{r_d}\)</span>) with mean <code>r_d_mu</code> and standard deviation <code>r_d_sd</code>.</p>
 <ul>
 <li><p>example code: <code>r_d_mu &lt;- mean(my_recr_data$ht_2, na.rm = TRUE)</code> and <code>r_d_sd &lt;- sd(my_recr_data$ht_2, na.rm = TRUE)</code>.</p></li>
-<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) = f_{r_d}(\mu_{r_d}, \sigma_{r_d})\)</span></p></li>
+<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) = f_{r_d}(z&#39;, \mu_{r_d}, \sigma_{r_d})\)</span></p></li>
 </ul></li>
 <li><p>germination (<code>g_i</code>) and establishment (<code>e_p</code>) are constants. The code below assumes we have our data in long format (each seed get its own row) and that successful germinations/establishments are coded as 1s, failures are 0s, and seeds we don’t know the fate of for whatever reason are <code>NA</code>s.</p>
 <ul>
@@ -523,7 +533,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="model-parameterization" class="section level3">
 <h3>Model parameterization</h3>
 <p>In the next chunk, we’ll set up the data list with all of our constants and make sure the names are what we want them to be. This example generates intercepts for 5 years of data. This can be altered according to your own needs. Then, we’ll define a couple functions to make the vital rate expressions easier to write.</p>
-<p>A key aspect here is setting the names on the time-varying parameters in the <code>data_list</code>. We are using the form <code>&quot;g_int_year&quot;</code>, and substituting the values that <code>&quot;year&quot;</code> can take in for the actual suffix. These don’t need to be numbers, they can be words, letters, or some combination of the two. For this example, the years will be represented with the values <code>1:5</code>. If we wanted to denote the actual years of the censuses, we could switch <code>1:5</code> to, for example, <code>2002:2006</code>.</p>
+<p>A key aspect here is setting the names on the time-varying parameters in the <code>data_list</code>. We are using the form <code>&quot;g_int_year&quot;</code>, and substituting the values that <code>&quot;year&quot;</code> can take in for the actual index. These don’t need to be numbers, they can be words, letters, or some combination of the two. For this example, the years will be represented with the values <code>1:5</code>. If we wanted to denote the actual years of the censuses, we could switch <code>1:5</code> to, for example, <code>2002:2006</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipmr)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the initial population conditions and parameters</span></span>
@@ -580,16 +590,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>inv_logit_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(int, slope, slope_2, sv) {</span>
 <span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(int <span class="sc">+</span> slope <span class="sc">*</span> sv <span class="sc">+</span> slope_2 <span class="sc">*</span> sv <span class="sc">^</span> <span class="dv">2</span>)))</span>
 <span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Next, we will set up our sub-kernels. We’ll append the <code>_year</code> suffix to the kernel <code>name</code>, the vital rate expressions and parameter values that have time-varying components (<code>g_year</code>, <code>f_s_year</code>, <code>g_int_year</code>, <code>f_s_int_year</code>), and the call to <code>truncated_distributions</code> so that the growth kernel is correctly specified. We’ll also pass a <code>list(year = 1:5))</code> into the <code>levels_hier_effs</code> argument of <code>define_kernel()</code>. When building the model, <code>make_ipm()</code> automatically expands these expressions to create 5 different expressions containing the various levels of <code>year</code>.</p>
+<p>Next, we will set up our sub-kernels. We’ll append the <code>_year</code> suffix to the kernel <code>name</code>, the vital rate expressions and parameter values that have time-varying components (<code>g_year</code>, <code>f_s_year</code>, <code>g_int_year</code>, <code>f_s_int_year</code>), and the call to <code>truncated_distributions</code> so that the growth kernel is correctly specified. We’ll also pass a <code>list(year = 1:5))</code> into the <code>par_set_indices</code> argument of <code>define_kernel()</code>. When building the model, <code>make_ipm()</code> automatically expands these expressions to create 5 different expressions containing the various levels of <code>year</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>general_stoch_kern_ipm <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen    =</span> <span class="st">&quot;general&quot;</span>,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">di_dd      =</span> <span class="st">&quot;di&quot;</span>, </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">det_stoch  =</span> <span class="st">&quot;stoch&quot;</span>,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">kern_param =</span> <span class="st">&quot;kern&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The kernel name gets a _year added to it to denote that there</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The kernel name gets indexed by _year to denote that there</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># are multiple possible kernels we can build with our parameter set.</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The _year gets substituted by the names of the possible levels in the </span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The _year gets substituted by the values in &quot;par_set_indices&quot; in the </span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># output, so in this example we will have P_1, P_2, P_3, P_4, and P_5</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&quot;P_year&quot;</span>,</span>
@@ -608,11 +618,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list        =</span> all_params,</span>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">states           =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>)),</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We set has_hier_effs to TRUE, signalling that we want to expand these</span></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># expressions across all levels of levels_hier_effs.</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We set uses_par_sets to TRUE, signalling that we want to expand these</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># expressions across all levels of par_set_indices.</span></span>
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels_hier_effs =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">par_set_indices =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor        =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># we also add the suffix to `target` here, because the value modified by </span></span>
@@ -623,7 +633,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># again, we append the suffix to the kernel name, vital rate expressions,</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># again, we append the index to the kernel name, vital rate expressions,</span></span>
 <span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and in the model formula.</span></span>
 <span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&quot;go_discrete_year&quot;</span>,</span>
@@ -637,86 +647,85 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_s_year      =</span> <span class="fu">exp</span>(r_s_int_year <span class="sc">+</span> r_s_slope <span class="sc">*</span> ht_1),</span>
 <span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
 <span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels_hier_effs =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">par_set_indices =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel has no time-varying parameters, and so does not require a suffix</span></span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># appended to it.</span></span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">name    =</span> <span class="st">&#39;stay_discrete&#39;</span>,</span>
-<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In this case, seeds in the seed bank either germinate or die, but they </span></span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># do not remain for multipe time steps. This can be adjusted as needed.</span></span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="dv">0</span>,</span>
-<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note that now, family = &quot;DD&quot; becuase it denotes a discrete -&gt; discrete transition</span></span>
-<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="st">&quot;DD&quot;</span>,</span>
-<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">states  =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;b&#39;</span>)),</span>
-<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel has no time-varying parameters, so we don&#39;t need to designate</span></span>
-<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    <span class="co"># it as such.</span></span>
-<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor =</span> <span class="cn">FALSE</span></span>
-<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
-<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel also doesn&#39;t get a suffix, because there are no varying parameters.</span></span>
-<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&#39;leave_discrete&#39;</span>,</span>
-<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d <span class="sc">*</span> d_ht,</span>
-<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
-<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
-<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
-<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
-<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
-<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">%&gt;%</span></span>
-<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_impl</span>(</span>
-<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_impl_args_list</span>(</span>
-<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>      <span class="co"># We add suffixes to the kernel names here to make sure they match the names</span></span>
-<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>      <span class="co"># we specified above.</span></span>
-<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>      <span class="at">kernel_names =</span> <span class="fu">c</span>(<span class="st">&quot;P_year&quot;</span>, <span class="st">&quot;go_discrete_year&quot;</span>, <span class="st">&quot;stay_discrete&quot;</span>, <span class="st">&quot;leave_discrete&quot;</span>),</span>
-<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>      <span class="at">int_rule     =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;midpoint&quot;</span>, <span class="dv">4</span>)),</span>
-<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>      <span class="at">state_start    =</span> <span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;ht&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;b&quot;</span>),</span>
-<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>      <span class="at">state_end      =</span> <span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&#39;ht&#39;</span>)</span>
-<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_domains</span>(</span>
-<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">ht =</span> <span class="fu">c</span>(L, U, n)</span>
-<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_pop_state</span>(</span>
-<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_ht =</span> init_pop_vec,</span>
-<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_b  =</span> init_seed_bank</span>
-<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_ipm</span>(</span>
-<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> <span class="dv">100</span>,</span>
-<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We can specify a sequence of kernels to select for the simulation.</span></span>
-<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This helps others to reproduce what we did,</span></span>
-<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and lets us keep track of the consequences of different selection</span></span>
-<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sequences for population dynamics. </span></span>
-<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_seq =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">size =</span> <span class="dv">100</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit   =</span> inv_logit,</span>
-<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>                    <span class="at">inv_logit_2 =</span> inv_logit_2)</span>
-<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel has no time-varying parameters, and so is not indexed.</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">name    =</span> <span class="st">&#39;stay_discrete&#39;</span>,</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># In this case, seeds in the seed bank either germinate or die, but they </span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># do not remain for multipe time steps. This can be adjusted as needed.</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="dv">0</span>,</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note that now, family = &quot;DD&quot; becuase it denotes a discrete -&gt; discrete transition</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="st">&quot;DD&quot;</span>,</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">states  =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;b&#39;</span>)),</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel has no time-varying parameters, so we don&#39;t need to designate</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># it as such.</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel also doesn&#39;t get a index, because there are no varying parameters.</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&#39;leave_discrete&#39;</span>,</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d <span class="sc">*</span> d_ht,</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">%&gt;%</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_impl</span>(</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_impl_args_list</span>(</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>      <span class="co"># We add suffixes to the kernel names here to make sure they match the names</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>      <span class="co"># we specified above.</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>      <span class="at">kernel_names =</span> <span class="fu">c</span>(<span class="st">&quot;P_year&quot;</span>, <span class="st">&quot;go_discrete_year&quot;</span>, <span class="st">&quot;stay_discrete&quot;</span>, <span class="st">&quot;leave_discrete&quot;</span>),</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>      <span class="at">int_rule     =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;midpoint&quot;</span>, <span class="dv">4</span>)),</span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>      <span class="at">state_start    =</span> <span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;ht&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;b&quot;</span>),</span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>      <span class="at">state_end      =</span> <span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&#39;ht&#39;</span>)</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_domains</span>(</span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>    <span class="at">ht =</span> <span class="fu">c</span>(L, U, n)</span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_pop_state</span>(</span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_ht =</span> init_pop_vec,</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_b  =</span> init_seed_bank</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_ipm</span>(</span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> <span class="dv">100</span>,</span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We can specify a sequence of kernels to select for the simulation.</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This helps others to reproduce what we did,</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and lets us keep track of the consequences of different selection</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sequences for population dynamics. </span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_seq =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">size =</span> <span class="dv">100</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit   =</span> inv_logit,</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>                    <span class="at">inv_logit_2 =</span> inv_logit_2)</span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p>100 isn’t too many iterations, but hopefully this demonstrates how to set up and implement such a model. There are a number of slots in the output that may be useful for further analyses.</p>
 <ol style="list-style-type: decimal">
 <li><p><code>env_seq</code>: This contains a character vector which shows the sequence in which levels of the time-varying components were chosen during model iteration. We could use this reproduce the model outputs later.</p></li>
 <li><p><code>pop_state$lambda</code>: This shows the single timestep per-capita growth rates for the simulation.</p></li>
 </ol>
-<p>Additionally, there are functions to compute the stochastic population growth rate (<span class="math inline">\(\lambda_s\)</span>, computed as <code>mean(log(pop_state$lambda))</code> with the first 10% of iterations removed as burn-in), and the mean sub-kernels.</p>
+<p>Additionally, there are functions to compute the stochastic population growth rate (<span class="math inline">\(\lambda_s\)</span>, computed as <code>mean(log(pop_state$lambda))</code>, burn in can be controlled with the <code>burn_in</code> parameter), and the mean sub-kernels.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mean_kernels <span class="ot">&lt;-</span> <span class="fu">mean_kernel</span>(general_stoch_kern_ipm)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lam_s        <span class="ot">&lt;-</span> <span class="fu">lambda</span>(general_stoch_kern_ipm)</span></code></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lam_s        <span class="ot">&lt;-</span> <span class="fu">lambda</span>(general_stoch_kern_ipm, <span class="at">burn_in =</span> <span class="fl">0.15</span>) <span class="co"># Remove first 15% of iterations</span></span></code></pre></div>
 </div>
 </div>
 <div id="general-models-with-continuously-varying-environments" class="section level2">
@@ -726,10 +735,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3>Mathematical overview</h3>
 <p>This example includes survival and growth models that make use of environmental covariates. The model can be written as:</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t+1) = \int_L^U K(z&#39;,z, \theta)n(z,t)dz + B(t) * r_s * r_d * \int_L^Uf_d(z&#39;)dz&#39;\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t+1) = \int_L^U K(z&#39;,z, \theta)n(z,t)dz + B(t) * r_s * r_d * \int_L^Uf_{c_d}(z&#39;)dz&#39;\)</span></p></li>
 <li><p><span class="math inline">\(B(t + 1) = r_e * r_s * \int_L^U c_r(z) * c_s(z)n(z,t)dz + B(t) * r_s * r_r\)</span></p></li>
 <li><p><span class="math inline">\(K(z&#39;,z,\theta) = P(z&#39;,z,\theta) + F(z&#39;,z)\)</span></p></li>
-<li><p><span class="math inline">\(P(z&#39;,z,\theta) = s(z, \theta) * g(z&#39;,z,\theta)\)</span></p></li>
+<li><p><span class="math inline">\(P(z&#39;,z,\theta) = s(z, \theta) * G(z&#39;,z,\theta)\)</span></p></li>
 <li><p><span class="math inline">\(F(z&#39;,z) = c_r(z) * c_s(z) * c_d(z&#39;) * (1 - r_e)\)</span></p></li>
 </ol>
 <p><span class="math inline">\(\theta\)</span> is a vector of time-varying environmental parameters. For this example, we’ll use a Gaussian distribution for temperature and a Gamma distribution for precipitation:</p>
@@ -744,13 +753,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Example model formula: <code>glm(survival ~ size_1 + temp + precip, data = my_surv_data, family = binomial())</code></p></li>
 <li><p>Mathematical form: <span class="math inline">\(Logit(s(z,\theta)) = \alpha_s + \beta_s^z * z + \beta_s^t * temp + \beta_s^p * precip\)</span></p></li>
 </ul></li>
-<li><p>growth (<code>g</code>, <span class="math inline">\(g(z&#39;,z,\theta)\)</span>): a linear regression</p>
+<li><p>growth (<code>g</code>, <span class="math inline">\(G(z&#39;,z,\theta)\)</span>): a linear regression with a Normal error distribution (denoted <span class="math inline">\(f_G\)</span>)</p>
 <ul>
 <li><p>Example model formula: <code>glm(size_2 ~ size_1 + temp + precip, data = my_grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(g(z&#39;,z) = f_g(\mu_g(z,\theta), \sigma_g)\)</span></p></li>
-<li><p><span class="math inline">\(\mu_g(z, \theta) = \alpha_g + \beta_g^z * z + \beta_g^t * temp + \beta_g^p * precip\)</span></p></li>
+<li><p><span class="math inline">\(G(z&#39;,z) = f_G(z&#39;, \mu_G(z,\theta), \sigma_G)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_G(z, \theta) = \alpha_G + \beta_G^z * z + \beta_G^t * temp + \beta_G^p * precip\)</span></p></li>
 </ul></li>
 </ul></li>
 <li><p>flower probability (<code>c_r</code>/<span class="math inline">\(c_r(z)\)</span>): A logistic regression.</p>
@@ -763,10 +772,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Example model formula: <code>glm(flower_n ~ size_1, data = my_flower_data, family = poisson())</code></p></li>
 <li><p>Mathematical form: <span class="math inline">\(Log(c_s(z)) = \alpha_{c_s} + \beta_{c_s} * z\)</span></p></li>
 </ul></li>
-<li><p>recruit sizes (<code>c_d</code>/<span class="math inline">\(c_d(z&#39;)\)</span>): A normal distribution (denoted <span class="math inline">\(f_{c_d}\)</span>)</p>
+<li><p>recruit sizes (<code>c_d</code>/<span class="math inline">\(c_d(z&#39;)\)</span>): A Normal distribution (denoted <span class="math inline">\(f_{c_d}\)</span>)</p>
 <ul>
 <li><p>Example code: mean (<code>c_d_mu</code>) <code>mean(my_recruit_data$size_2, na.rm = TRUE)</code> and standard deviation (<code>c_d_sd</code>) <code>sd(my_recruit_data$size_2, na.rm = TRUE)</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(c_d(z&#39;) = f_{c_d}(\mu_{f_d}, \sigma_{f_d})\)</span></p></li>
+<li><p>Mathematical form: <span class="math inline">\(c_d(z&#39;) = f_{c_d}(z&#39;, \mu_{f_d}, \sigma_{f_d})\)</span></p></li>
 </ul></li>
 <li><p>Constants: Discrete stage survival (<code>r_s</code>), discrete stage entrance probability (<code>r_e</code>), discrete stage departure probability conditional on survival (<code>r_d</code>), and probability of remaining in discrete stage (<code>r_r</code>).</p></li>
 </ol>
@@ -815,38 +824,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>sample_env <span class="ot">&lt;-</span> <span class="cf">function</span>(env_params) {</span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We generate one value for each covariate per iteration, and return it </span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># as a named list. We can reference the names in this list in vital rate </span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># expressions.</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>                env_params<span class="sc">$</span>temp_mu, </span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>                env_params<span class="sc">$</span>temp_sd)</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  precip <span class="ot">&lt;-</span> <span class="fu">rgamma</span>(<span class="dv">1</span>, </span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">shape =</span> env_params<span class="sc">$</span>precip_shape,</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>                   <span class="at">rate =</span> env_params<span class="sc">$</span>precip_rate)</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  out        <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temp =</span> temp, <span class="at">precip =</span> precip)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># as a named list. </span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  temp_now <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>                    env_params<span class="sc">$</span>temp_mu, </span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>                    env_params<span class="sc">$</span>temp_sd)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  precip_now <span class="ot">&lt;-</span> <span class="fu">rgamma</span>(<span class="dv">1</span>, </span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                       <span class="at">shape =</span> env_params<span class="sc">$</span>precip_shape,</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                       <span class="at">rate =</span> env_params<span class="sc">$</span>precip_rate)</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The vital rate expressions can now use the names &quot;temp&quot; and &quot;precip&quot; </span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># as if they were in the data_list.</span></span>
 <span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  out        <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">temp =</span> temp_now, <span class="at">precip =</span> precip_now)</span>
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Again, we can define our own functions and pass them into calls to make_ipm. This</span></span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co"># isn&#39;t strictly necessary, but can make the model code more readable/less error prone.</span></span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(lin_term) {</span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>lin_term))</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Again, we can define our own functions and pass them into calls to make_ipm. This</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a><span class="co"># isn&#39;t strictly necessary, but can make the model code more readable/less error prone.</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>inv_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(lin_term) {</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>lin_term))</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="model-specification" class="section level3">
 <h3>Model specification</h3>
 <p>We are now ready to begin implementing the model. This next chunk should look familiar, with the caveat that we have now add the terms <code>temp</code> and <code>precip</code> to vital rates in the <code>P</code> kernel.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>general_stoch_param_model <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen    =</span> <span class="st">&quot;general&quot;</span>,</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">di_dd      =</span> <span class="st">&quot;di&quot;</span>, </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">det_stoch  =</span> <span class="st">&quot;stoch&quot;</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">kern_param =</span> <span class="st">&quot;param&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">di_dd      =</span> <span class="st">&quot;di&quot;</span>, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">det_stoch  =</span> <span class="st">&quot;stoch&quot;</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">kern_param =</span> <span class="st">&quot;param&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">name       =</span> <span class="st">&quot;P_stoch&quot;</span>,</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family     =</span> <span class="st">&quot;CC&quot;</span>,</span>
@@ -868,7 +878,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>   </span>
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;surf_area&quot;</span>)),</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&quot;norm&quot;</span>, <span class="st">&quot;g&quot;</span>)</span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
@@ -883,7 +893,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_d           =</span> <span class="fu">dnorm</span>(surf_area_2, c_d_mu, c_d_sd),</span>
 <span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;surf_area&quot;</span>)),</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&quot;norm&quot;</span>, <span class="st">&quot;c_d&quot;</span>)</span>
 <span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
@@ -902,7 +912,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_s           =</span> <span class="fu">exp</span>(c_s_int <span class="sc">+</span> c_s_slope <span class="sc">*</span> surf_area_1),</span>
 <span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;surf_area&quot;</span>, <span class="st">&quot;sb&quot;</span>)),</span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># There is not eviction to correct here, so we can set this to false</span></span>
 <span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -914,7 +924,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> r_s <span class="sc">*</span> r_r,</span>
 <span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="st">&quot;sb&quot;</span>),</span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">FALSE</span></span>
 <span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
@@ -924,7 +934,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_d           =</span> <span class="fu">dnorm</span>(surf_area_2, c_d_mu, c_d_sd),</span>
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;surf_area&quot;</span>, <span class="st">&quot;sb&quot;</span>)),</span>
-<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&quot;norm&quot;</span>, <span class="st">&quot;c_d&quot;</span>)</span>
 <span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
@@ -972,7 +982,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># in the second version, sample_env is provided in the usr_funs list of </span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># make_ipm(). These two vesrions are equivalent. </span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># make_ipm(). These two versions are equivalent. </span></span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>general_stoch_param_ipm <span class="ot">&lt;-</span>  <span class="fu">define_env_state</span>(</span>
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">proto_ipm  =</span> general_stoch_param_model,</span>
@@ -987,7 +997,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sample_env =</span> sample_env),</span>
 <span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">iterate =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>           <span class="at">iterations =</span> <span class="dv">100</span>)</span></code></pre></div>
-<p>Stochastic parameter-resampled models also return an <code>env_seq</code>, but this time it will be a <code>data.frame</code> of parameter draws rather than a character vector. We can also compute mean sub-kernels and <span class="math inline">\(\lambda_s\)</span> as we did in the kernel-resampled models. This time, each mean kernel is computed as the average of each sub-kernel over the course of the simulation (i.e. mean of all <code>P</code> kernels). Because the other sub-kernels are not time-varying, they will be numerically equivalent to the sub-kernels stored in the IPM object.</p>
+<p>Stochastic parameter-resampled models also return an <code>env_seq</code>, but this time it will be a <code>data.frame</code> of parameter draws rather than a character vector. We can also compute mean sub-kernels and <span class="math inline">\(\lambda_s\)</span> as we did in the kernel-resampled models. This time, each mean kernel is computed as the average of each sub-kernel over the course of the simulation (i.e. mean of all <code>P</code> kernels). Some sub-kernels in our example are not time-varying - they will be numerically equivalent to the sub-kernels stored in the IPM object.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>env_draws  <span class="ot">&lt;-</span> general_stoch_param_ipm<span class="sc">$</span>env_seq</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mean_kerns <span class="ot">&lt;-</span> <span class="fu">mean_kernel</span>(general_stoch_param_ipm)</span>
@@ -1054,7 +1064,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">s             =</span> <span class="fu">inv_logit_2</span>(s_int, s_slope, s_slope_2, ht_1),</span>
 <span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
 <span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>)),</span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;g&#39;</span>)</span>
@@ -1067,7 +1077,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_s           =</span> <span class="fu">exp</span>(r_s_int <span class="sc">+</span> r_s_slope <span class="sc">*</span> ht_1),</span>
 <span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
 <span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span></span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span></span>
 <span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">name      =</span> <span class="st">&#39;stay_discrete&#39;</span>,</span>
@@ -1083,7 +1093,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
 <span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
 <span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
@@ -1134,7 +1144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mega_mat <span class="ot">&lt;-</span> <span class="fu">make_iter_kernel</span>(general_ipm,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">mega_mat =</span> <span class="fu">c</span>(P, <span class="dv">0</span>, </span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                                            I, P))</span></code></pre></div>
-<p>Finally, <code>make_iter_kernel</code> supports <code>ipmr</code>’s suffix syntax as well, enabling us to generate lists of mega-kernels for each level of the grouping variables. We’ll re-run the <code>&quot;general_di_stoch_kern&quot;</code> example from above to demonstrate this.</p>
+<p>Finally, <code>make_iter_kernel</code> supports <code>ipmr</code>’s parameter set index syntax as well, enabling us to generate a list of mega-kernels for each combination of parameter set values. We’ll re-run the <code>&quot;general_di_stoch_kern&quot;</code> example from above to demonstrate this.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>all_g_int   <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> <span class="fl">5.781</span>, <span class="at">sd =</span> <span class="fl">0.9</span>)) </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>all_f_s_int <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> <span class="fl">2.6204</span>, <span class="at">sd =</span> <span class="fl">0.3</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1188,8 +1198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">s                =</span> <span class="fu">inv_logit_2</span>(s_int, s_slope, s_slope_2, ht_1),</span>
 <span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list        =</span> all_params,</span>
 <span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">states           =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>)),</span>
-<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels_hier_effs =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">par_set_indices =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>),</span>
 <span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor        =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun        =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">&#39;g_year&#39;</span>)</span>
@@ -1202,15 +1212,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">f_s_year      =</span> <span class="fu">exp</span>(f_s_int_year <span class="sc">+</span> f_s_slope <span class="sc">*</span> ht_1),</span>
 <span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
 <span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">levels_hier_effs =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets    =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">par_set_indices =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
 <span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">name    =</span> <span class="st">&#39;stay_discrete&#39;</span>,</span>
 <span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="dv">0</span>,</span>
 <span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="st">&quot;DD&quot;</span>,</span>
 <span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">states  =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;b&#39;</span>)),</span>
-<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor =</span> <span class="cn">FALSE</span></span>
 <span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
@@ -1220,7 +1230,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
 <span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
 <span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">has_hier_effs =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
 <span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;f_d&#39;</span>)</span>
@@ -1250,7 +1260,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>block_list <span class="ot">&lt;-</span> <span class="fu">make_iter_kernel</span>(general_stoch_kern_ipm,</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">mega_mat =</span> <span class="fu">c</span>(stay_discrete, go_discrete_year,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                                              leave_discrete, P_year))</span></code></pre></div>
-<p><code>make_iter_kernel()</code> also works for simple models, but assumes that all sub-kernels are combined additively (i.e. <span class="math inline">\(K(z&#39;,z) = P(z&#39;,z) + F(&#39;z,z)\)</span>). It can handle suffix syntax as well, but does not require the <code>mega_mat</code> argument, and can just be called with an IPM object.</p>
+<p><code>make_iter_kernel()</code> also works for simple models, but assumes that all sub-kernels are combined additively (i.e. <span class="math inline">\(K(z&#39;,z) = P(z&#39;,z) + F(&#39;z,z)\)</span>). It can handle parameter set index syntax as well, but does not require the <code>mega_mat</code> argument, and can just be called with an IPM object.</p>
 </div>
 
 

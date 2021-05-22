@@ -43,7 +43,7 @@
 #    # states should be a list of the state variables that the kernel operates on
 #  
 #    states        = list(c('dbh')),
-#    has_hier_effs = FALSE,
+#    uses_par_sets = FALSE,
 #    evict_cor     = TRUE,
 #    evict_fun     = truncated_distributions("norm", "g")
 #  )
@@ -71,7 +71,7 @@
 #        g_sd      = 2.2
 #      ),
 #      states        = list(c('dbh')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions(fun   = "norm",
 #                                              target =  "g")
@@ -104,7 +104,7 @@
 #        r_d_sd    = 0.7    # sd(my_recr_data$size_2, na.rm = TRUE)
 #      ),
 #      states        = list(c('dbh')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    )
@@ -280,7 +280,7 @@
 #      g             = dnorm(sa_2, g_mu, grow_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions(fun   = "norm",
 #                                              target =  "g")
@@ -304,7 +304,7 @@
 #      r_d           = dnorm(sa_2, recr_mu, recr_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions(fun   = "norm",
 #                                              target =  "r_d")
@@ -354,7 +354,7 @@
 #      g             = dnorm(sa_2, g_mu, grow_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "g")
 #    ) %>%
@@ -372,7 +372,7 @@
 #      r_d           = dnorm(sa_2, recr_mu, recr_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    )  %>%
@@ -460,6 +460,9 @@
 #  s_r_int   <- rnorm(5, 0, 0.7) # unlist(ranef(my_surv_mod)) for an lme4 output
 #  r_s_r_int <- rnorm(5, 0, 0.2) # unlist(ranef(my_flower_mod)) for an lme4 output
 #  
+#  # We'll call our hypothetical sites 1, 2, 3, 4, and 5. The "r" prefix is to
+#  # remind us that these are random quantities.
+#  
 #  nms <- paste("r_", 1:5, sep = "")
 #  
 #  names(g_r_int)   <- paste('g_', nms, sep = "")
@@ -483,19 +486,20 @@
 #  my_ipm <- init_ipm(sim_gen = "simple", di_dd = "di", det_stoch = "det") %>%
 #    define_kernel(
 #  
-#      # Our P kernels will vary from site to site, so we append the "_site" suffix
-#      # to them.
+#      # Our P kernels will vary from site to site, so we index it with "_site"
 #  
 #      name             = 'P_site',
 #  
 #      # Similarly, our survival and growth functions will vary from site to site
-#      # so these are also modified
+#      # so these are also indexed
 #  
 #      formula          = s_site * g_site,
 #      family           = "CC",
 #  
 #      # The linear predictor for the survival function can be split out
 #      # into its own expression as well. This might help keep track of things.
+#      # Survival is indexed by site as well.
+#  
 #      s_lin_site       = s_int + s_r_site + s_slope * ht_1,
 #      s_site           = 1 / (1 + exp(-s_lin_site)),
 #  
@@ -507,16 +511,16 @@
 #      data_list        = all_params_list,
 #      states           = list(c('ht')),
 #  
-#      # Here, we tell ipmr that the model has some hierarchical variable, and
-#      # provide a list describing the values it can take. The values in
-#      # levels_hier_effs are substituted for "site" everywhere in the model, except
+#      # Here, we tell ipmr that the model has some parameter sets, and
+#      # provide a list describing the values the index can take. The values in
+#      # par_set_indices are substituted for "site" everywhere in the model, except
 #      # for the data list. This is why we had to make sure that the names there
 #      # matched the levels we supply here.
 #  
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(site = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices  = list(site = 1:5),
 #  
-#      # We must also modify the variables in the eviction function
+#      # We must also index the variables in the eviction function
 #  
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "g_site")
@@ -531,30 +535,29 @@
 #      family           = "CC",
 #  
 #      # In this example, we didn't include a site level effect for probability
-#      # of flowering, only seed production. Thus, this expression is NOT modified.
+#      # of flowering, only seed production. Thus, this expression is NOT indexed.
 #  
 #      r_r_lin          = r_r_int + r_r_slope * ht_1,
 #      r_r              = 1 / (1 + exp(- r_r_lin)),
 #  
-#      # We modify the seed production expression with the site effect
+#      # We index the seed production expression with the site effect
 #  
 #      r_s_site         = exp(r_s_int + r_s_r_site + r_s_slope * ht_1),
 #      r_d              = dnorm(ht_2, mean = mu_rd, sd = sd_rd),
 #      data_list        = all_params_list,
 #      states           = list(c('ht')),
 #  
-#      # As in the P kernel, we specify the levels the hierarchical variable
-#      # can take, and modify the eviction function.
+#      # As in the P kernel, we specify the values the index can have.
 #  
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(site = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices  = list(site = 1:5),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "r_d")
 #    ) %>%
 #    define_impl(
 #      make_impl_args_list(
 #  
-#        # The impl_args are also modified with the suffix
+#        # The impl_args are also modified with the index
 #  
 #        kernel_names = c("P_site", "F_site"),
 #        int_rule     = rep("midpoint", 2),
@@ -565,7 +568,7 @@
 #    define_domains(ht = c(0.2, 40, 100)) %>%
 #  
 #    # We also append the suffix in define_pop_state(). THis will create a deterministic
-#    # simulation for every level of "site"
+#    # simulation for every "site"
 #  
 #    define_pop_state(n_ht_site = runif(100)) %>%
 #    make_ipm(iterate  = TRUE,
@@ -659,7 +662,7 @@
 #                     det_stoch  = "stoch",
 #                     kern_param = "kern") %>%
 #    define_kernel(
-#      name             = 'P_yr',         # P because P_yr
+#      name             = 'P_yr',         # P becomes P_yr
 #      formula          = s_yr * g_yr,    # g and s become g_yr and s_yr, respectively
 #      family           = "CC",
 #  
@@ -672,12 +675,12 @@
 #  
 #      # all_params_list contains the named parameters g_r_1, g_r_2, s_r_1, s_r_2, etc.
 #      # This is the only level where the user is required to fully expand the name
-#      # X hier_level combinations.
+#      # X par_set_indices combinations.
 #  
 #      data_list        = all_params_list,
 #      states           = list(c('ht')),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(yr = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices  = list(yr = 1:5),
 #      evict_cor        = TRUE,
 #  
 #      # reference to g_yr in evict_fun is also updated
@@ -694,8 +697,8 @@
 #      r_d              = dnorm(ht_2, mean = mu_fd, sd = sd_fd),
 #      data_list        = all_params_list,
 #      states           = list(c('ht')),
-#      has_hier_effs    = TRUE,
-#      levels_hier_effs = list(yr = 1:5),
+#      uses_par_sets    = TRUE,
+#      par_set_indices = list(yr = 1:5),
 #      evict_cor        = TRUE,
 #      evict_fun        = truncated_distributions("norm", "r_d")
 #    ) %>%
@@ -771,15 +774,15 @@
 #    # as a named list. We can reference the names in this list in vital rate
 #    # expressions.
 #  
-#    temp <- rnorm(1,
-#                  env_params$temp_mu,
-#                  env_params$temp_sd)
+#    temp_now   <- rnorm(1,
+#                        env_params$temp_mu,
+#                        env_params$temp_sd)
 #  
-#    precip <- rgamma(1,
+#    precip_now <- rgamma(1,
 #                     shape = env_params$precip_shape,
-#                     rate = env_params$precip_rate)
+#                     rate  = env_params$precip_rate)
 #  
-#    out        <- list(temp = temp, precip = precip)
+#    out        <- list(temp = temp_now, precip = precip_now)
 #  
 #    return(out)
 #  
@@ -819,7 +822,7 @@
 #  
 #      data_list = constant_params,
 #      states    = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "g")
 #    ) %>%
@@ -833,7 +836,7 @@
 #      r_d           = dnorm(surf_area_2, r_d_mu, r_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    ) %>%
@@ -902,7 +905,7 @@
 #  
 #      data_list = constant_params,
 #      states    = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "g")
 #    ) %>%
@@ -916,7 +919,7 @@
 #      r_d           = dnorm(surf_area_2, r_d_mu, r_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    ) %>%
@@ -992,7 +995,7 @@
 #  
 #      data_list = constant_params,
 #      states    = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "g")
 #    ) %>%
@@ -1006,7 +1009,7 @@
 #      r_d           = dnorm(surf_area_2, r_d_mu, r_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c('surf_area')),
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions("norm", "r_d")
 #    ) %>%
@@ -1119,7 +1122,7 @@
 #      g             = dnorm(sa_2, g_mu, grow_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions(fun   = "norm",
 #                                              target =  "g")
@@ -1143,7 +1146,7 @@
 #      r_d           = dnorm(sa_2, recr_mu, recr_sd),
 #      states        = list(c("sa")),
 #      data_list     = params,
-#      has_hier_effs = FALSE,
+#      uses_par_sets = FALSE,
 #      evict_cor     = TRUE,
 #      evict_fun     = truncated_distributions(fun   = "norm",
 #                                              target =  "r_d")

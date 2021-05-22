@@ -1,7 +1,7 @@
 Package: ipmr
 Title: Fits Integral Projection Models Using an Expression Based
         Framework
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c( 
     person(given = "Sam",
            family = "Levin",
@@ -58,7 +58,7 @@ LinkingTo: Rcpp
 URL: https://levisc8.github.io/ipmr/, https://github.com/levisc8/ipmr
 BugReports: https://github.com/levisc8/ipmr/issues
 NeedsCompilation: yes
-Packaged: 2021-02-05 13:35:04 UTC; sl13sise
+Packaged: 2021-05-22 14:49:09 UTC; sl13sise
 Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Aldo Compagnoni [aut],
   Dylan Childs [aut],
@@ -67,4 +67,4 @@ Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Tiffany Knight [aut]
 Maintainer: Sam Levin <levisc8@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-02-10 10:40:26 UTC
+Date/Publication: 2021-05-22 15:40:02 UTC

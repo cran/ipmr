@@ -243,7 +243,7 @@ ipmr_cr <- init_ipm(sim_gen    = "general",
     s             = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
     data_list     = data_list_cr,
     states        = states,
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions('norm',
                                             'g')
@@ -256,7 +256,7 @@ ipmr_cr <- init_ipm(sim_gen    = "general",
     f_s           = exp(f_s_int + f_s_slope * ht_1),
     data_list     = data_list_cr,
     states        = states,
-    has_hier_effs = FALSE
+    uses_par_sets = FALSE
   ) %>%
   define_kernel(
     name    = 'stay_discrete',
@@ -272,7 +272,7 @@ ipmr_cr <- init_ipm(sim_gen    = "general",
     family        = 'DC',
     data_list     = data_list_cr,
     states        = states,
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions('norm',
                                             'f_d')
@@ -348,7 +348,7 @@ test_that("kernel definition order doesn't matter", {
       f_s           = exp(f_s_int + f_s_slope * ht_1),
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE
+      uses_par_sets = FALSE
     ) %>%
     define_kernel(
       name    = 'stay_discrete',
@@ -364,7 +364,7 @@ test_that("kernel definition order doesn't matter", {
       family        = 'DC',
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'f_d')
@@ -378,7 +378,7 @@ test_that("kernel definition order doesn't matter", {
       s             = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'g')
@@ -430,7 +430,7 @@ test_that('normalize pop vec works the right way', {
       s             = inv_logit_2(s_int, s_slope, s_slope_2, ht_1),
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'g')
@@ -443,7 +443,7 @@ test_that('normalize pop vec works the right way', {
       f_s           = exp(f_s_int + f_s_slope * ht_1),
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE
+      uses_par_sets = FALSE
     ) %>%
     define_kernel(
       name    = 'stay_discrete',
@@ -459,7 +459,7 @@ test_that('normalize pop vec works the right way', {
       family        = 'DC',
       data_list     = data_list_cr,
       states        = states,
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'f_d')
@@ -632,9 +632,9 @@ eigs_1 <- eigen(K_co_1)
 eigs_2 <- eigen(K_co_2)
 eigs_3 <- eigen(K_co_3)
 
-lambdas_hand <- c(lambda_1 = Re(eigs_1$values[1]),
-                  lambda_2 = Re(eigs_2$values[1]),
-                  lambda_3 = Re(eigs_3$values[1]))
+lambdas_hand <- c(Re(eigs_1$values[1]),
+                  Re(eigs_2$values[1]),
+                  Re(eigs_3$values[1]))
 
 ws_hand      <- cbind(
   w_1 = Re(eigs_1$vectors[ , 1]),
@@ -659,8 +659,8 @@ ipmr_control <- init_ipm(sim_gen    = "general",
     s_site           = inv_logit_2(s_int + s_int_site, s_slope, s_slope_2, ht_1),
     data_list        = data_list_control,
     states           = states,
-    has_hier_effs    = TRUE,
-    levels_hier_effs = list(site = 1:3),
+    uses_par_sets    = TRUE,
+    par_set_indices = list(site = 1:3),
     evict_cor        = TRUE,
     evict_fun        = truncated_distributions('norm',
                                                'g_site')
@@ -673,7 +673,7 @@ ipmr_control <- init_ipm(sim_gen    = "general",
     f_s           = exp(f_s_int + f_s_slope * ht_1),
     data_list     = data_list_control,
     states        = states,
-    has_hier_effs = FALSE
+    uses_par_sets = FALSE
   ) %>%
   define_kernel(
     name    = 'stay_discrete',
@@ -689,7 +689,7 @@ ipmr_control <- init_ipm(sim_gen    = "general",
     family        = 'DC',
     data_list     = data_list_control,
     states        = states,
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions('norm',
                                             'f_d')
@@ -717,9 +717,11 @@ ipmr_control <- init_ipm(sim_gen    = "general",
            return_all_envs = TRUE,
            normalize_pop_size = TRUE)
 
-lambdas_ipmr <- vapply(ipmr_control$pop_state[grepl("lambda", names(ipmr_control$pop_state))],
-                      function(x) x[ , 200],
-                      numeric(1L))
+# lambdas_ipmr <- vapply(ipmr_control$pop_state[grepl("lambda", names(ipmr_control$pop_state))],
+#                       function(x) x[ , 200],
+#                       numeric(1L))
+
+lambdas_ipmr <- lambda(ipmr_control, type_lambda = "last")
 
 ws <- list()
 
@@ -739,7 +741,7 @@ for(i in seq_len(3)) {
 ws <- do.call("cbind", ws) %>%
   setNames(paste("w_", 1:3, sep = ""))
 
-test_that("hierarchical models get the same answers as hand generated models", {
+test_that("par_setarchical models get the same answers as hand generated models", {
 
   expect_equal(lambdas_ipmr, lambdas_hand, tolerance = 1e-10)
   expect_equal(ws[ , 1], ws_hand[ , 1], tolerance = 1e-10)
@@ -747,6 +749,42 @@ test_that("hierarchical models get the same answers as hand generated models", {
   expect_equal(ws[ , 3], ws_hand[ , 3], tolerance = 1e-10)
 
 })
+
+test_that("make_iter_kernel can handle arithmetic in expressions", {
+
+  f <- matrix(runif(500 * 500), 500, 500)
+
+  k_1 <- rbind(
+    cbind(dd_co, cd_co),
+    cbind(dc_co, P_1 + f)
+  )
+
+  k_2 <- rbind(
+    cbind(dd_co, cd_co),
+    cbind(dc_co, P_2 + f)
+  )
+  k_3 <- rbind(
+    cbind(dd_co, cd_co),
+    cbind(dc_co, P_3 + f)
+  )
+
+  ipmr_control$sub_kernels <- c(ipmr_control$sub_kernels, list(f = f))
+
+  test_ks <- make_iter_kernel(ipmr_control,
+                              mega_mat = c(stay_discrete,  go_discrete,
+                                           leave_discrete, P_site + f))
+
+
+  expect_equal(k_1, test_ks$mega_matrix_1, ignore_attr = c("dimnames", "class"))
+  expect_equal(k_2, test_ks$mega_matrix_2, ignore_attr = c("dimnames", "class"))
+  expect_equal(k_3, test_ks$mega_matrix_3, ignore_attr = c("dimnames", "class"))
+
+  expect_s3_class(test_ks$mega_matrix_1, "ipmr_matrix")
+  expect_s3_class(test_ks$mega_matrix_2, "ipmr_matrix")
+  expect_s3_class(test_ks$mega_matrix_3, "ipmr_matrix")
+
+})
+
 
 
 test_that("DC/CD transitions without size-dependence work", {
@@ -777,7 +815,7 @@ test_that("DC/CD transitions without size-dependence work", {
       m             = m_notH,
       data_list     = data_list,
       states        = list(c('size')),
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'g')
@@ -791,7 +829,7 @@ test_that("DC/CD transitions without size-dependence work", {
       m             = m_notH,
       data_list     = data_list,
       states        = list(c('size', "sprout")),
-      has_hier_effs = FALSE
+      uses_par_sets = FALSE
     ) %>%
 
 
@@ -810,7 +848,7 @@ test_that("DC/CD transitions without size-dependence work", {
       family        = 'DC',
       data_list     = data_list,
       states        = list(c('size', "sprout")),
-      has_hier_effs = FALSE,
+      uses_par_sets = FALSE,
       evict_cor     = TRUE,
       evict_fun     = truncated_distributions('norm',
                                               'f_d')

@@ -35,8 +35,8 @@
     !!! out,
     data_list = list(),
     states = list(unique(unlist(others$state_var))),
-    has_hier_effs = !is.null(temp$all_names),
-    levels_hier_effs = temp$all_levels,
+    uses_par_sets = !is.null(temp$all_names),
+    par_set_indices = temp$all_levels,
     evict_cor = FALSE,
     evict_fun = NULL,
     integrate = FALSE
@@ -75,14 +75,14 @@
 
 .create_iter_exprs.default <- function(others, start_end, all_states, fun) {
 
-  # Need to generate a deterministic simulation across all levels of hier_effs
+  # Need to generate a deterministic simulation across all levels of par_sets
   # if needed.
 
   out <- list()
 
-  if(any(others$has_hier_effs)) {
+  if(any(others$uses_par_sets)) {
 
-    all_levels <- .flatten_to_depth(others$levels_hier_effs, 1L) %>%
+    all_levels <- .flatten_to_depth(others$par_set_indices, 1L) %>%
       .[!duplicated(names(.))] %>%
       .[!is.na(.)]
 
@@ -226,10 +226,10 @@
 
   temp        <- .create_iter_exprs(others, start_end, all_states, fun)
 
-  levels_ages <- .flatten_to_depth(others$levels_ages, 1L) %>%
+  age_indices <- .flatten_to_depth(others$age_indices, 1L) %>%
     .[!duplicated(names(.))]
 
-  temp        <- .handle_max_age(temp, levels_ages, start_end, fun)
+  temp        <- .handle_max_age(temp, age_indices, start_end, fun)
   class(temp) <- "age_x_size_exprs"
 
   # if every state only has 1 expression operating on it, then we're done!
@@ -247,9 +247,9 @@
     !!! out,
     data_list = list(),
     states = list(unique(unlist(others$state_var))),
-    has_hier_effs = !is.null(temp$all_names),
-    levels_hier_effs = temp$all_levels,
-    levels_ages = levels_ages,
+    uses_par_sets = !is.null(temp$all_names),
+    par_set_indices = temp$all_levels,
+    age_indices = age_indices,
     evict_cor = FALSE,
     evict_fun = NULL,
     integrate = FALSE
@@ -261,15 +261,15 @@
 
 }
 
-.handle_max_age <- function(expr_list, levels_ages, start_end, fun) {
+.handle_max_age <- function(expr_list, age_indices, start_end, fun) {
 
   switch(fun,
          "right_mult" = .handle_max_age_right(expr_list,
-                                              levels_ages,
+                                              age_indices,
                                               start_end,
                                               fun),
          "left_mult" = .handle_max_age_left(expr_list,
-                                            levels_ages,
+                                            age_indices,
                                             start_end,
                                             fun))
 
@@ -277,15 +277,15 @@
 
 # Prevents age_plus_1 from going over the maximum age limit during left
 # iteration (which has form n_age_t_1 = kernel_age %*% n_age_plus_1_t)
-.handle_max_age_left <- function(expr_list, levels_ages, start_end, fun) {
+.handle_max_age_left <- function(expr_list, age_indices, start_end, fun) {
 
-  if(!"max_age" %in% names(levels_ages)) {
+  if(!"max_age" %in% names(age_indices)) {
 
-    max_age <- unlist(levels_ages) %>% max()
+    max_age <- unlist(age_indices) %>% max()
 
   } else {
 
-    max_age <- levels_ages$max_age
+    max_age <- age_indices$max_age
 
   }
 
@@ -341,37 +341,66 @@
 
 }
 
-.handle_max_age_right <- function(expr_list, levels_ages, start_end, fun) {
+.handle_max_age_right <- function(expr_list, age_indices, start_end, fun) {
 
-  if(!"max_age" %in% names(levels_ages)) return(expr_list)
+  if(!"max_age" %in% names(age_indices)) return(expr_list)
 
   # Generate a kernel name for the max age slot. This is the survival/growth
-  # kernel (arbitrarily named) with "max_age_minus_1" tacked on. The trait distribution
-  # it operates on is the
+  # kernel (arbitrarily named) with "max_age_minus_1" tacked on. However,
+  # check to see if max_age kernel is defined separately.
 
-  kerns <- lapply(names(expr_list$out),
-                  function(x) {
-                    grepl("_age_", x)
+  if(!any(grepl("max_age", names(expr_list$out)))) {
+
+    kerns <- lapply(names(expr_list$out),
+                    function(x) {
+                      grepl("_age_", x)
                     }) %>%
-    unlist() %>%
-    expr_list$out[.] %>%
-    lapply(function(y, start_end){
-      args <- rlang::call_args(y)
-      kern <- rlang::expr_text(args$kernel)
-      sv   <- rlang::expr_text(args$vectr)
+      unlist() %>%
+      expr_list$out[.] %>%
+      lapply(function(y, start_end){
+        args <- rlang::call_args(y)
+        kern <- rlang::expr_text(args$kernel)
+        sv   <- rlang::expr_text(args$vectr)
 
-      kern <- c(gsub("age", "max_age", kern), # P_max_age_minus_1 %*% n_max_age_minus_1_t
-               gsub("age_minus_1", "max_age", kern)) # P_max_age %*% n_max_age_t
-      sv   <- c(gsub("age", "max_age", sv),
-               gsub("age_minus_1", "max_age", sv))
+        kern <- c(gsub("age", "max_age", kern), # P_max_age_minus_1 %*% n_max_age_minus_1_t
+                  gsub("age_minus_1", "max_age", kern)) # P_max_age %*% n_max_age_t
+        sv   <- c(gsub("age", "max_age", sv),
+                  gsub("age_minus_1", "max_age", sv))
 
-      out <- list(kern = kern,
-                  sv   = sv)
-      return(out)
-    },
-    start_end = start_end)
+        out <- list(kern = kern,
+                    sv   = sv)
+        return(out)
+      },
+      start_end = start_end)
 
-  end_states <- gsub("_age_", "_max_age_", names(kerns))
+    end_states <- gsub("_age_", "_max_age_", names(kerns))
+
+  } else {
+
+    kerns <- lapply(names(expr_list$out),
+                    function(x) {
+                      grepl("max_age_", x)
+                    }) %>%
+      unlist() %>%
+      expr_list$out[.] %>%
+      lapply(function(y, start_end) {
+        args <- rlang::call_args(y)
+        kern <- rlang::expr_text(args$kernel)
+        sv   <- rlang::expr_text(args$vectr)
+
+        kern <- c(gsub("age_minus_1", "age", kern)) # P_max_age %*% n_max_age_t
+        sv   <- c(gsub("age_minus_1", "age", sv))
+
+        out <- list(kern = kern,
+                    sv   = sv)
+        return(out)
+      },
+      start_end = start_end)
+
+    end_states <- names(kerns)
+
+  }
+
 
   out <- list()
 
@@ -405,14 +434,14 @@
 
 .create_iter_exprs.age_x_size <- function(others, start_end, all_states, fun) {
 
-  # Need to generate a deterministic simulation across all levels of hier_effs
+  # Need to generate a deterministic simulation across all levels of par_sets
   # if needed.
 
   out <- list()
 
-  if(any(others$has_hier_effs)) {
+  if(any(others$uses_par_sets)) {
 
-    all_levels <- .flatten_to_depth(others$levels_hier_effs, 1L) %>%
+    all_levels <- .flatten_to_depth(others$par_set_indices, 1L) %>%
       .[!duplicated(names(.))] %>%
       .[!is.na(.)]
 

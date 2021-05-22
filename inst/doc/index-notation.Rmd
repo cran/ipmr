@@ -1,24 +1,24 @@
 ---
-title: "Hierarchical Notation"
+title: "Index Notation in ipmr"
 output:
   rmarkdown::html_vignette: 
     toc: yes
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Hierarchical Notation}
+  %\VignetteIndexEntry{Index Notation in ipmr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ## Overview
 
-This vignette describes how to write formulas using `ipmr`'s notation for hierarchical models. It is meant to mirror the standard mathematical notation used to represent the models. The examples here will primarily use [lme4](https://github.com/lme4/lme4/) to illustrate how to go from vital rate models to functional forms that you can use in `ipmr`. You are of course free to use whatever model fitting software you like, but the number of different possibilities are far too great to cover in this vignette. 
+This vignette describes how to write formulas using `ipmr`'s notation for models derived from parameter sets. Parameter sets may be derived from mixed models, or fixed effects that are discrete. The notation is meant to mirror the standard mathematical notation used to represent the models. The examples here will primarily use [lme4](https://github.com/lme4/lme4/) to illustrate how to go from vital rate models to functional forms that you can use in `ipmr`. You are of course free to use whatever model fitting software you like, but the number of different possibilities are far too great to cover in this vignette. 
 
-The `ipmr` notation is meant to make implementing models more concise, as it allows you to avoid re-typing/copy+pasting the same kernel formats and just substituting, for example, plot name or transition year. It works by appending suffixes to kernels, vital rates, and parameters that can take multiple values (e.g. `P` becomes `P_yr`). We then add a named list where the names correspond to the suffix and the entries correspond to the values it can take. We pass pass the list to `levels_hier_effs` (i.e. `levels_hier_effs = list(yr = 1:5)`), and set `has_hier_effs = TRUE`. 
+The `ipmr` notation is meant to make implementing models more concise, as it allows you to avoid re-typing/copy+pasting the same kernel formats and just substituting, for example, plot name or transition year. It works by appending an index suffix to kernels, vital rates, and parameters that can take multiple values (e.g. `P` becomes `P_yr`). We then add a named list where the names correspond to the index and the entries correspond to the values it can take. We pass pass the list to `par_set_indices` (i.e. `par_set_indices = list(yr = 1:5)`), and set `uses_par_sets = TRUE`. 
 
 ## Quick start guide {#quick}
 
-Some quick translations between mathematical notation, R model syntax, and `ipmr` style notation. In the `ipmr` column, suffixes that are appended are highlighted in **bold**.
+Some quick translations between mathematical notation, R model syntax, and `ipmr` style notation. In the `ipmr` column, index suffixes that are appended are highlighted in **bold**.
 
 Suffix names are not restricted to the examples below, and can be anything you want them to be.
 
@@ -28,11 +28,13 @@ The mathematical notation in this vignette will take the following form:
 
 Coefficients/parameters: $\alpha$ - intercept, $\beta$ - slope, $\mu$ - mean, $\sigma$ standard deviation.
 
-Vital rates: subscripts on the coefficients/parameters. For example, $\alpha_g$ for the intercept of a growth model.
+Vital rates: subscripts on the coefficients/parameters. For example, $\alpha_G$ for the intercept of a growth model.
 
-Hierarchical effects: superscripts on coefficients. For example, $\beta_g^{site}$ for a site specific growth slope.
+Kernels: bivariate kernels are denoted with capital letters (e.g. a growth kernel $G(z',z)$) and univariate functions are denoted with lower case letters (e.g. a survival function $s(z)$).
 
-Probability density functions: these are denoted with $f_p$, where $_p$ is replaced by the vital rate. For example, $f_g(\mu_g, \sigma_g)$ would denote a probability density function for growth.
+Indices: superscripts on coefficients. For example, $\beta_g^{site}$ for a site specific growth slope.
+
+Probability density functions: these are denoted with $f_p$, where $_p$ is replaced by the vital rate. For example, $f_G(z',\mu_G, \sigma_G)$ would denote a probability density function for growth.
 
 
 ```{r echo = FALSE}
@@ -44,8 +46,8 @@ styles <- c("style='width:150%;'")
 knitr::kable(
   data.frame(
 
-    Math    = c("$\\mu_g^{yr} = \\alpha_g + \\alpha_g^{yr} * \\beta_g * z$",
-                         "$g(z',z) = f_g(\\mu_g^{yr}, \\sigma_g)$",
+    Math    = c("$\\mu_G^{yr} = \\alpha_G + \\alpha_G^{yr} * \\beta_G * z$",
+                         "$G(z',z) = f_G(z', \\mu_g^{yr}, \\sigma_G)$",
                 "$Logit(\\mu_{s}^{plot,yr}) = \\alpha_s + \\alpha_{s}^{plot,yr} + \\beta * z$",
                 "",
                 "",
@@ -78,15 +80,15 @@ knitr::kable(
 
 ```
 
-Internally, `ipmr` generates the various levels using `expand.grid`. This means that every combination of the values in `levels_hier_effs` must exist in the `data_list`, or the model will fail with an error along the lines of (`Error in eval_tidy: object 'x_yz' not found`). In order to exclude levels that do not exist in your data, you can add a vector to the list in `levels_hier_effs` called `drop_levels`. This should contain the values you wish to exclude as a character vector. For example, if data are collected for `sites = c("a", "b", "c")`, and `years = c(2005:2008)`, but there is no data from site `"a"` in 2007, we can use `levels_hier_effs = list(site = c("a", "b", "c"), year = c(2005:2008), drop_levels = c("a_2007"))`.
+Internally, `ipmr` generates the various levels using `expand.grid`. This means that every combination of the values in `par_set_indices` must exist in the `data_list`, or the model will fail with an error along the lines of (`Error in eval_tidy: object 'x_yz' not found`). In order to exclude levels that do not exist in your data, you can add a vector to the list in `par_set_indices` called `drop_levels`. This should contain the values you wish to exclude as a character vector. For example, if data are collected for `sites = c("a", "b", "c")`, and `years = c(2005:2008)`, but there is no data from site `"a"` in 2007, we can use `par_set_indices = list(site = c("a", "b", "c"), year = c(2005:2008), drop_levels = c("a_2007"))`.
 
-When picking values to appear in `levels_hier_effs`, it is best to avoid longer words or phrases where words are separated by underscores (e.g. `treatment = c("h_removal", "c_addition")`), as this may cause problems when values are substituted into expressions. CamelCase is generally safer in these cases (e.g. use `treatment = c("hRemoval", "cAddition")` instead of `treatment = c("h_removal", "c_addition")`).
+When picking values to appear in `par_set_indices`, it is best to avoid longer words or phrases where words are separated by underscores (e.g. `treatment = c("h_removal", "c_addition")`), as this may cause problems when values are substituted into expressions. CamelCase is generally safer in these cases (e.g. use `treatment = c("hRemoval", "cAddition")` instead of `treatment = c("h_removal", "c_addition")`).
 
-## Hierarchical models with a single hierarchical variable {#sim_di_s_k}
+## Models with a single indexed variable {#sim_di_s_k}
 
-These models are pretty common in the IPM literature. They encompass cases where a single site has been sampled over many years, or sampled many sites across one transition. 
+These models are pretty common in the IPM literature. Examples include IPMs where a single site has been sampled over many years, or sampled many sites across one transition. 
 
-This example will use a hypothetical study that spans 5 transitions and has 6 consecutive censuses. The temporal variation will be denoted with a suffix/superscript appended to each term that it modifies ($x^{yr}$/`x_yr`). To limit complexity, let's pretend our exploratory analysis and model selection indicated the best overall models included random year-specifc intercepts for growth ($g^{yr}$) and survival ($s^{yr}$), but not probability of reproduction ($f_p$), recruit production ($f_r$), or the recruit size distribution ($f_d$). We will work with a simple model to start (i.e. 1 continuous state variable, no discrete states). This yields the following IPM ($z,z'$ represent size/height/weight at time $t$ and $t+1$, respectively):
+This example will use a hypothetical study that spans 5 transitions and has 6 consecutive censuses. The temporal variation will be denoted with a index/superscript appended to each term that it modifies ($x^{yr}$/`x_yr`). To limit complexity, let's pretend our exploratory analysis and model selection indicated the best overall models included random year-specifc intercepts for growth ($g^{yr}$) and survival ($s^{yr}$), but not probability of reproduction ($r_p$), recruit production ($r_r$), or the recruit size distribution ($r_d$). We will work with a simple model to start (i.e. 1 continuous state variable, no discrete states). This yields the following IPM ($z,z'$ represent size/height/weight at time $t$ and $t+1$, respectively):
 
 1. $n(z', t + 1) = \int_L^U [P^{yr}(z',z) + F(z',z)]n(z,t)dz$
 
@@ -100,25 +102,25 @@ The vital rate models could be written on paper as follows:
 
 4. Growth
 
-    - $\mu_g = (\alpha_g + \alpha_g^{yr})+ \beta_g * z$ 
+    - $\mu_G^{yr}(z) = (\alpha_G + \alpha_G^{yr})+ \beta_G * z$ 
 
-    - $g(z',z) = f_g(\mu_g, \sigma_g)$
+    - $G^{yr}(z',z) = f_G(z', \mu_G^{yr}(z), \sigma_G)$
     
 5. Survival
 
-    - $Logit(s) = (\alpha_s + \alpha_s^{yr}) + \beta_s * z$
+    - $Logit(s^{yr}(z)) = (\alpha_s + \alpha_s^{yr}) + \beta_s * z$
     
 6. Probability of reproducing
 
-    - $Logit(r_p) = \alpha_{r_p} + \beta_{r_p} * z$
+    - $Logit(r_p(z)) = \alpha_{r_p} + \beta_{r_p} * z$
     
 7. Recruit production
 
-    - $log(r_r) = \alpha_{r_r} + \beta_{r_r} * z$
+    - $log(r_r(z)) = \alpha_{r_r} + \beta_{r_r} * z$
     
 8. Recruit size distribution
 
-    - $r_d(z') = f_{r_d}(\mu_{r_d}, \sigma_{r_d})$
+    - $r_d(z') = f_{r_d}(z', \mu_{r_d}, \sigma_{r_d})$
 
 and modeled in R as follows:
 
@@ -239,7 +241,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 
 ```
 
-We are now ready to begin implementing the kernels. This model will be a simple, density independent, stochastic kernel-resampled model. The parts where the hierarchical syntax is used are highlighted by comments in the code block:
+We are now ready to begin implementing the kernels. This model will be a simple, density independent, stochastic kernel-resampled model. The parts where the index syntax is used are highlighted by comments in the code block:
 
 
 ```{r eval = FALSE}
@@ -250,14 +252,14 @@ ex_ipm <-init_ipm(sim_gen    = "simple",
                   kern_param = "kern") %>%
   define_kernel(
     
-    # _yr is appended as a suffix with an underscore. Notice how the formula
-    # from 2 is translated into the formula argument and the kernel name
+    # The _yr index is appended as a suffix with an underscore. Notice how the formula
+    # from Eq 2 is translated into the formula argument and the kernel name
     
     name             = "P_yr",
     family           = "CC",
     formula          = s_yr * g_yr,
     
-    # We also modify each parameter name with a suffix as well.
+    # We also modify each parameter name is indexed as well.
     # Here, I've split out the linear predictor and the inverse logit
     # transformation into separate steps to avoid over cluttering
     
@@ -272,14 +274,14 @@ ex_ipm <-init_ipm(sim_gen    = "simple",
     data_list        = all_params,
     states           = list(c("z")),
     
-    # We signal that the kernel has hierarchical effects
+    # We signal that the kernel has parameter sets
     
-    has_hier_effs    = TRUE,
+    uses_par_sets    = TRUE,
     
-    # And provide the values that each suffix can take as a named list. 
-    # The name(s) in this list MUST match the suffix used in the expressions.
+    # And provide the values that each index can take as a named list. 
+    # The name(s) in this list MUST match the index used in the expressions.
     
-    levels_hier_effs = list(yr = 2001:2006),
+    par_set_indices = list(yr = 2001:2006),
     evict_cor        = TRUE,
     evict_fun        = truncated_distributions("norm", "g_yr")
   ) %>%
@@ -297,7 +299,7 @@ ex_ipm <-init_ipm(sim_gen    = "simple",
     r_d           = dnorm(z_2, mu_r_d, sigma_r_d),
     data_list     = all_params,
     states        = list(c("z")),
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions("norm", "r_d")
   ) %>%
@@ -325,7 +327,7 @@ ex_ipm <-init_ipm(sim_gen    = "simple",
 ```
 
 
-## Hierarchical models with continuously varying environments {#complicated}
+## IPMs from discrete parameter sets and continuously varying environments {#complicated}
 
 Sometimes, models will have discretely and continuously varying components as functions of different variables. For example, a study could consider multiple sites (discrete component) and spatial and/or temporal fluctuations in the environment at each site (continuous component). We'll use a hypothetical study that models demography as a function of environment across multiple sites to illustrate this. 
 
@@ -346,7 +348,7 @@ $$
 
 The sub kernels are: 
 
-4. $P^{site}(z',z, \theta) = s^{site}(z, \theta) * g^{site}(z',z, \theta)$
+4. $P^{site}(z',z, \theta) = s^{site}(z, \theta) * G^{site}(z',z, \theta)$
 
 5. $F^{site}(z',z, \theta) = c_{{p}}^{site}(z, \theta) * c_{r}^{site}(z, \theta) * c_d(z')$
 
@@ -360,9 +362,9 @@ And the size/climate dependent vital rate functions and example R code are:
 
     - example R code: `glmer(survival ~ size + temp + precip + (1 | site), data = my_surv_data, family = binomial())`
 
-9. $g^{site}(z',z,\theta) = f_g(\mu_g^{site}(z, \theta), \sigma_g)$
+9. $G^{site}(z',z,\theta) = f_G(z', \mu_G^{site}(z, \theta), \sigma_G)$
 
-10. $\mu_g^{site}(z, \theta) = (\alpha_g + \alpha_g^{site}) + \beta_g^{z} * z + \beta_g^{t} * \theta^{t} + \beta_g^{p} * \theta^{p}$
+10. $\mu_G^{site}(z, \theta) = (\alpha_G + \alpha_G^{site}) + \beta_G^{z} * z + \beta_G^{t} * \theta^{t} + \beta_G^{p} * \theta^{p}$
 
     - example R code: `lmer(size_next ~ size + temp + precip + (1 | site), data = my_grow_data)`
 
@@ -374,7 +376,7 @@ And the size/climate dependent vital rate functions and example R code are:
 
     - example R code: `glmer(flower_n ~ size + temp + precip + (1 | site), data = my_flower_data, family = poisson())`
 
-13. $c_d(z') = f_{c_d}(\mu_{c_d}, \sigma_{c_d})$
+13. $c_d(z') = f_{c_d}(z', \mu_{c_d}, \sigma_{c_d})$
 
     - example R code: `mean(my_recr_data$size_next); sd(my_recr_data$size_next)`
 
@@ -507,8 +509,8 @@ ex_ipm <- init_ipm(sim_gen    = "general",
     g_site           = dnorm(z_2, mu_g_site, sigma_g),
     data_list        = all_pars,
     states           = list(c("z")),
-    has_hier_effs    = TRUE,
-    levels_hier_effs = list(site = LETTERS[1:6]),
+    uses_par_sets    = TRUE,
+    par_set_indices = list(site = LETTERS[1:6]),
     evict_cor        = TRUE,
     evict_fun        = truncated_distributions("norm", "g_site")
   ) %>%
@@ -528,8 +530,8 @@ ex_ipm <- init_ipm(sim_gen    = "general",
     c_d              = dnorm(z_2, mu_c_d, sigma_c_d),
     data_list        = all_pars,
     states           = list(c("z", "sb1", "sb2")),
-    has_hier_effs    = TRUE,
-    levels_hier_effs = list(site = LETTERS[1:6]),
+    uses_par_sets    = TRUE,
+    par_set_indices = list(site = LETTERS[1:6]),
     evict_cor        = TRUE,
     evict_fun        = truncated_distributions("norm", "c_d")
     ) %>%
@@ -548,8 +550,8 @@ ex_ipm <- init_ipm(sim_gen    = "general",
                            beta_c_r_temp * temp),
     data_list        = all_pars,
     states           = list(c("z", "sb1")),
-    has_hier_effs    = TRUE,
-    levels_hier_effs = list(site = LETTERS[1:6]),
+    uses_par_sets    = TRUE,
+    par_set_indices = list(site = LETTERS[1:6]),
     evict_cor        = FALSE
   ) %>%
   define_kernel(
@@ -558,7 +560,7 @@ ex_ipm <- init_ipm(sim_gen    = "general",
     formula       = s_sb1 * (1 - r_sb1),
     data_list     = all_pars,
     states        = list(c("sb1", "sb2")),
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = FALSE
   ) %>%
   define_kernel(
@@ -568,7 +570,7 @@ ex_ipm <- init_ipm(sim_gen    = "general",
     c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
     data_list     = all_pars,
     states        = list(c("z", "sb1")),
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions("norm", "c_d")
   ) %>%
@@ -579,7 +581,7 @@ ex_ipm <- init_ipm(sim_gen    = "general",
     c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
     data_list     = all_pars,
     states        = list(c("z", "sb2")),
-    has_hier_effs = FALSE,
+    uses_par_sets = FALSE,
     evict_cor     = TRUE,
     evict_fun     = truncated_distributions("norm", "c_d")
   ) %>%
@@ -617,7 +619,5 @@ ex_ipm <- init_ipm(sim_gen    = "general",
 
 lambda(ex_ipm)
 ```
-
-
 
 

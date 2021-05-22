@@ -9,33 +9,36 @@
 #    g_int     = 8,
 #    g_slope   = 0.92,
 #    sd_g      = 0.9,
-#    f_r_int   = 0.09,
-#    f_r_slope = 0.05,
-#    f_s_int   = 0.1,
-#    f_s_slope = 0.005,
-#    f_s_dd    = -0.03,
-#    mu_fd     = 9,
-#    sd_fd     = 2
+#    r_r_int   = 0.09,
+#    r_r_slope = 0.05,
+#    r_s_int   = 0.1,
+#    r_s_slope = 0.005,
+#    r_s_dd    = -0.03,
+#    mu_rd     = 9,
+#    sd_rd     = 2
 #  )
 #  
 #  # Now, simulate some random intercepts for growth, survival, and offspring production
 #  
 #  g_r_int   <- rnorm(5, 0, 0.3)
 #  s_r_int   <- rnorm(5, 0, 0.7)
-#  f_s_r_int <- rnorm(5, 0, 0.2)
+#  r_s_r_int <- rnorm(5, 0, 0.2)
 #  
 #  nms <- paste("r_", 1:5, sep = "")
 #  
 #  names(g_r_int) <- paste("g_", nms, sep = "")
 #  names(s_r_int) <- paste("s_", nms, sep = "")
-#  names(f_s_r_int) <- paste("f_s_", nms, sep = "")
+#  names(r_s_r_int) <- paste("r_s_", nms, sep = "")
 #  
-#  params     <- c(data_list, g_r_int, s_r_int, f_s_r_int)
+#  params     <- c(data_list, g_r_int, s_r_int, r_s_r_int)
 #  
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  
-#  dd_ipm <- init_ipm(sim_gen = "simple", di_dd = "dd", det_stoch = "det")
+#  dd_ipm <- init_ipm(sim_gen = "simple",
+#                     di_dd = "dd",
+#                     det_stoch = "stoch",
+#                     kern_param = "kern")
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  dd_ipm <- define_kernel(
@@ -43,13 +46,13 @@
 #    name             = "P_yr",
 #    formula          = s_yr * g_yr,
 #    family           = "CC",
-#    s_yr             = plogis(s_int + s_r_yr + s_slope * size_1 + s_dd * sum(n_size_t) * d_size),
+#    s_yr             = plogis(s_int + s_r_yr + s_slope * size_1 + s_dd * sum(n_size_t)),
 #    g_yr             = dnorm(size_2, g_mu_yr, sd_g),
 #    g_mu_yr          = g_int + g_r_yr + g_slope * size_1,
 #    data_list        = params,
 #    states           = list(c("size")),
-#    has_hier_effs    = TRUE,
-#    levels_hier_effs = list(yr = 1:5),
+#    uses_par_sets    = TRUE,
+#    par_set_indices = list(yr = 1:5),
 #    evict_cor        = TRUE,
 #    evict_fun        = truncated_distributions("norm", "g_yr")
 #  )
@@ -60,17 +63,17 @@
 #  dd_ipm <- define_kernel(
 #    proto_ipm        = dd_ipm,
 #    name             = "F_yr",
-#    formula          = f_r * f_s_yr * f_d,
+#    formula          = r_r * r_s_yr * r_d,
 #    family           = "CC",
-#    f_r              = plogis(f_r_int + f_r_slope * size_1),
-#    f_s_yr           = exp(f_s_int + f_s_r_yr + f_s_slope * size_1 + f_s_dd * sum(n_size_t) * d_size),
-#    f_d              = dnorm(size_2, mu_fd, sd_fd),
+#    r_r              = plogis(r_r_int + r_r_slope * size_1),
+#    r_s_yr           = exp(r_s_int + r_s_r_yr + r_s_slope * size_1 + r_s_dd * sum(n_size_t)),
+#    r_d              = dnorm(size_2, mu_rd, sd_rd),
 #    data_list        = params,
 #    states           = list(c("size")),
-#    has_hier_effs    = TRUE,
-#    levels_hier_effs = list(yr = 1:5),
+#    uses_par_sets    = TRUE,
+#    par_set_indices = list(yr = 1:5),
 #    evict_cor        = TRUE,
-#    evict_fun        = truncated_distributions("norm", "f_d")
+#    evict_fun        = truncated_distributions("norm", "r_d")
 #    )
 #  
 

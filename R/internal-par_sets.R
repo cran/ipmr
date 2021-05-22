@@ -1,10 +1,10 @@
-# Internal hierarchical effect functions
+# Internal par_setarchical effect functions
 
-.split_hier_effs <- function(proto_ipm) {
+.split_par_sets <- function(proto_ipm) {
 
-  kerns <- which(proto_ipm$has_hier_effs)
+  kerns <- which(proto_ipm$uses_par_sets)
 
-  # Create a place to hold the output - either kernels with no hierarchical effects
+  # Create a place to hold the output - either kernels with no parameter sets
   # or a new proto
 
   if(length(kerns) != dim(proto_ipm)[1]) {
@@ -17,14 +17,14 @@
 
   }
 
-  hier_rows <- proto_ipm[kerns, ]
+  par_set_rows <- proto_ipm[kerns, ]
 
-  all_hier_effs <- .flatten_to_depth(hier_rows$levels_hier_effs, 1L)
+  all_par_sets <- .flatten_to_depth(par_set_rows$par_set_indices, 1L)
 
 
-  for(i in seq_len(dim(hier_rows)[1])) {
+  for(i in seq_len(dim(par_set_rows)[1])) {
 
-    levs   <- hier_rows$levels_hier_effs[[i]]
+    levs   <- par_set_rows$par_set_indices[[i]]
 
     if("drop_levels" %in% names(levs)) {
 
@@ -37,16 +37,16 @@
     levels <- lapply(levs, eval) %>%
       expand.grid(stringsAsFactors = FALSE)
 
-    temp   <- .expand_hier_effs(hier_rows[i, ], levels)
+    temp   <- .expand_par_sets(par_set_rows[i, ], levels)
 
     out    <- rbind(out, temp)
 
   }
 
 
-  if("drop_levels" %in% names(all_hier_effs)) {
+  if("drop_levels" %in% names(all_par_sets)) {
 
-    out <- .drop_levels_hier_effs(out, all_hier_effs)
+    out <- .drop_par_set_indices(out, all_par_sets)
 
   }
 
@@ -55,9 +55,9 @@
 
 #'@noRd
 
-.drop_levels_hier_effs <- function(proto_ipm, all_hier_effs) {
+.drop_par_set_indices <- function(proto_ipm, all_par_sets) {
 
-  to_drop <- all_hier_effs[!duplicated(names(all_hier_effs))]
+  to_drop <- all_par_sets[!duplicated(names(all_par_sets))]
   to_drop <- to_drop$drop_levels
 
   for(i in seq_along(to_drop)) {
@@ -70,7 +70,7 @@
 
 }
 
-.expand_hier_effs <- function(rows, levels) {
+.expand_par_sets <- function(rows, levels) {
 
   # Place holder, this will ultimately get rbind'ed
   new_proto <- rows[0, ]
@@ -178,7 +178,7 @@
       )
 
 
-      # Case when multiple hierarchical effects exist. The first iteration peels
+      # Case when multiple parameter sets exist. The first iteration peels
       # off a layer of list from the quosure, so we need to make sure we don't
       # grab that at the second time of asking.
 
@@ -222,23 +222,23 @@
 
 }
 
-.make_hier_levels <- function(hier_effs) {
+.make_par_set_indices <- function(par_sets) {
 
-  hier_effs <- .flatten_to_depth(hier_effs, 1L) %>%
+  par_sets <- .flatten_to_depth(par_sets, 1L) %>%
     .[!names(.) == "levels"]
 
-  if(length(hier_effs) == 1) {
+  if(length(par_sets) == 1) {
 
-    levs <- as.data.frame(unlist(hier_effs),
+    levs <- as.data.frame(unlist(par_sets),
                           stringsAsFactors = FALSE)
     drop <- FALSE
 
   } else {
 
-    if("drop_levels" %in% names(hier_effs)) {
+    if("drop_levels" %in% names(par_sets)) {
 
-      to_drop <- hier_effs$drop_levels
-      hier_effs <- hier_effs[-c("drop_levels")]
+      to_drop <- par_sets$drop_levels
+      par_sets <- par_sets[-c("drop_levels")]
       drop <- TRUE
 
     } else {
@@ -247,7 +247,7 @@
 
     }
 
-    levs <- lapply(hier_effs, eval) %>%
+    levs <- lapply(par_sets, eval) %>%
       expand.grid(stringsAsFactors = FALSE)
 
   }
