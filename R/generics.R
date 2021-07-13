@@ -329,7 +329,7 @@ print.proto_ipm <- function(x, ...) {
 
 print.simple_di_det_ipm <- function(x,
                                     comp_lambda = TRUE,
-                                    type_lambda = 'all',
+                                    type_lambda = 'last',
                                     sig_digits = 3,
                                     check_conv = TRUE,
                                     ...) {
@@ -346,12 +346,14 @@ print.simple_di_det_ipm <- function(x,
 
     lambdas <- lambda(x, type_lambda = type_lambda)
 
-    l_msg  <- paste0('\nDeterministic lambda = ', lambdas, sep = "")
+    l_msg  <- paste0('\nDeterministic lambda = ',
+                     round(lambdas, sig_digits),
+                     sep = "")
 
     msg    <- c(msg, l_msg)
 
     if(check_conv &&
-       ! .is_conv_to_asymptotic(lambdas)) {
+       !is_conv_to_asymptotic(x)) {
 
       # Captures the name of the model that the user gave rather than
       # just print "x isn't converged"
@@ -378,54 +380,102 @@ print.simple_di_det_ipm <- function(x,
 #' @rdname print_star
 #' @export
 
-print.simple_di_stoch_kern_ipm <- function(x,
-                                           comp_lambda = TRUE,
-                                           type_lambda = 'stochastic',
-                                           sig_digits = 3,
-                                           ...) {
+print.simple_dd_det_ipm <- function(x,
+                                    comp_lambda = TRUE,
+                                    type_lambda = 'last',
+                                    sig_digits = 3,
+                                    ...) {
 
-  mod_nm     <- deparse(substitute(x))
+  mod_nm <- deparse(substitute(x))
+
   pretty_cls <- .pretty_class(class(x)[1])
 
   msg <- paste0('A ',
                 pretty_cls,
                 ' IPM with ',
-                length(x$iterators),
-                ' iteration kernel(s) and ',
                 length(x$sub_kernels),
                 ' sub-kernel(s) defined.', sep = "")
 
   if(comp_lambda) {
 
-    all_lams <- lambda(x, type_lambda = type_lambda)
+    lambdas <- lambda(x, type_lambda = type_lambda)
 
-
-    l_msg  <- paste0('\nStochastic lambda for ',
-                     mod_nm,
-                     ' = ',
-                     round(all_lams, sig_digits),
-                     sep = "" )
+    l_msg  <- paste('\nLambda for the final time step of the model is: ',
+                    round(lambdas, sig_digits),
+                    sep = "")
 
     det_lam_msg <- paste('\nCall lambda(',
                          mod_nm,
                          ', type_lambda = "all") for deterministic lambdas\n',
                          'from each iteration.',
                          sep = "")
+
     msg <- c(msg, l_msg, det_lam_msg)
   }
+
   cat(msg)
 
   invisible(x)
+
+
 }
 
 #' @rdname print_star
 #' @export
 
+print.simple_di_stoch_kern_ipm <- function(x,
+                                             comp_lambda = TRUE,
+                                             type_lambda = 'stochastic',
+                                             sig_digits = 3,
+                                             ...) {
+
+    mod_nm     <- deparse(substitute(x))
+    pretty_cls <- .pretty_class(class(x)[1])
+
+    msg <- paste0('A ',
+                  pretty_cls,
+                  ' IPM with ',
+                  length(x$iterators),
+                  ' iteration kernel(s) and ',
+                  length(x$sub_kernels),
+                  ' sub-kernel(s) defined.', sep = "")
+
+    if(comp_lambda) {
+
+      all_lams <- lambda(x, type_lambda = type_lambda)
+
+
+      l_msg  <- paste0('\nStochastic lambda for ',
+                       mod_nm,
+                       ' = ',
+                       round(all_lams, sig_digits),
+                       sep = "" )
+
+      det_lam_msg <- paste('\nCall lambda(',
+                           mod_nm,
+                           ', type_lambda = "all") for deterministic lambdas\n',
+                           'from each iteration.',
+                           sep = "")
+      msg <- c(msg, l_msg, det_lam_msg)
+    }
+    cat(msg)
+
+    invisible(x)
+}
+
+#' @rdname print_star
+#' @export
+
+print.simple_dd_stoch_kern_ipm <- print.simple_di_stoch_kern_ipm
+
+#' @rdname print_star
+#' @export
+
 print.simple_di_stoch_param_ipm <- function(x,
-                                            comp_lambda = TRUE,
-                                            type_lambda = 'stochastic',
-                                            sig_digits  = 3,
-                                            ...) {
+                                              comp_lambda = TRUE,
+                                              type_lambda = 'stochastic',
+                                              sig_digits  = 3,
+                                              ...) {
   pretty_cls <- .pretty_class(class(x)[1])
 
   mod_nm     <- deparse(substitute(x))
@@ -461,6 +511,10 @@ print.simple_di_stoch_param_ipm <- function(x,
   invisible(x)
 
 }
+#' @rdname print_star
+#' @export
+
+print.simple_dd_stoch_param_ipm <- print.simple_di_stoch_param_ipm
 
 #' @rdname print_star
 #' @export
@@ -523,11 +577,60 @@ print.general_di_det_ipm <- function(x,
 #' @rdname print_star
 #' @export
 
+print.general_dd_det_ipm <- function(x,
+                                     comp_lambda = TRUE,
+                                     type_lambda = 'last',
+                                     sig_digits  = 3,
+                                     ...) {
+
+  pretty_cls <- .pretty_class(class(x)[1])
+
+  pops <- x$pop_state[!grepl("lambda", names(x$pop_state))]
+
+  msg <- paste0('A ',
+                pretty_cls,
+                ' IPM with ',
+                length(x$sub_kernels),
+                ' sub-kernel(s) and ',
+                length(pops),
+                ' population vectors defined.', sep = "")
+
+  mod_nm <- deparse(substitute(x))
+
+
+  if(comp_lambda) {
+
+    ret_lam <- lambda(x, type_lambda = type_lambda)
+
+    l_msg <- paste('\nLambda for the final time step of the model is: ',
+                   round(ret_lam, sig_digits),
+                   '\nCall lambda(',
+                   mod_nm,
+                   ', type_lambda = "all") for deterministic lambdas\n',
+                   'from each iteration.',
+                   sep = "")
+
+    msg <- c(msg, l_msg)
+
+  }
+
+
+
+
+  cat(msg)
+
+  invisible(x)
+
+}
+
+#' @rdname print_star
+#' @export
+
 print.general_di_stoch_kern_ipm <- function(x,
-                                            comp_lambda = TRUE,
-                                            type_lambda = 'stochastic',
-                                            sig_digits  = 3,
-                                            ...) {
+                                              comp_lambda = TRUE,
+                                              type_lambda = 'stochastic',
+                                              sig_digits  = 3,
+                                              ...) {
 
   pretty_cls <- .pretty_class(class(x)[1])
 
@@ -538,7 +641,7 @@ print.general_di_stoch_kern_ipm <- function(x,
                 ' IPM with ',
                 length(x$sub_kernels),
                 ' sub-kernel(s) and ',
-                length(x$pop_state),
+                length(x$pop_state[!grepl("lambda", names(x$pop_state))]),
                 ' population vectors defined.',
                 sep = "")
 
@@ -567,18 +670,20 @@ print.general_di_stoch_kern_ipm <- function(x,
 
   cat(msg)
   invisible(x)
-}
+  }
 
-
+#' @rdname print_star
+#' @export
+print.general_dd_stoch_kern_ipm <- print.general_di_stoch_kern_ipm
 
 #' @rdname print_star
 #' @export
 
-print.general_di_stoch_param_ipm <- function(x,
-                                             comp_lambda = TRUE,
-                                             type_lambda = 'stochastic',
-                                             sig_digits  = 3,
-                                             ...) {
+print.general_di_stoch_param_ipm <-  function(x,
+                                               comp_lambda = TRUE,
+                                               type_lambda = 'stochastic',
+                                               sig_digits  = 3,
+                                               ...) {
 
   pretty_cls <- .pretty_class(class(x)[1])
   mod_nm <- deparse(substitute(x))
@@ -589,7 +694,7 @@ print.general_di_stoch_param_ipm <- function(x,
     ' IPM with ',
     length(x$sub_kernels),
     ' sub-kernel(s), ',
-    length(x$pop_state),
+    length(x$pop_state[!grepl("lambda", names(x$pop_state))]),
     ' population vectors, and ',
     dim(x$env_seq)[2],
     ' environmental parameters defined.',
@@ -633,6 +738,10 @@ print.general_di_stoch_param_ipm <- function(x,
   cat(msg)
   invisible(x)
 }
+
+#' @rdname print_star
+#' @export
+print.general_dd_stoch_param_ipm <- print.general_di_stoch_param_ipm
 
 #' @export
 
@@ -921,11 +1030,15 @@ print.ipmr_vital_rate_funs <- function(x, ...) {
 #' returns a vector of lambda values for each time step of the simulation (equal
 #' in length to the \code{iterations} argument of \code{make_ipm()}).
 #' \code{'last'} returns the lambda value for the final timestep.
-#' \code{'stochastic'} returns a single value which is the mean
-#' of the log'd per-capita growth rate from each time step.
+#' \code{'stochastic'} returns a single value, which by default is
+#' \code{mean(log(lambda(ipm, type_lambda = "all")))}, with the proportion of
+#' \code{burn_in} iterations removed from the beginning of the simulation. Set
+#' \code{log} to \code{FASLE} to get the arithmetic mean for stochastic models.
 #' @param ... other arguments passed to methods.
 #' @param burn_in The proportion of iterations to discard. Default is 0.1
 #' (i.e. first 10\% of iterations in the simulation).
+#' @param log Return lambda on the log scale? This is \code{TRUE} by default for
+#' stochastic models, and \code{FALSE} for deterministic models.
 #'
 #' @return When \code{type_lambda = "all"}, an array. Rows correspond to time
 #' steps, and columns correspond to parameter sets (if any). For other types,
@@ -942,9 +1055,8 @@ lambda <- function(ipm, ...) {
 
 lambda.simple_di_det_ipm <- function(ipm,
                                      type_lambda = 'last',
+                                     log = FALSE,
                                      ...) {
-
-  # Need to insert arg checking - probably should make it it's own s3 generic.
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -952,7 +1064,11 @@ lambda.simple_di_det_ipm <- function(ipm,
                      "all"  = TRUE,
                      'last' = FALSE)
 
-  .lambda_pop_size(ipm, all_lambdas = all_lams)
+  out <- .lambda_pop_size(ipm, all_lambdas = all_lams)
+
+  if(log) out <- log(out)
+
+  return(out)
 
 }
 
@@ -962,8 +1078,8 @@ lambda.simple_di_det_ipm <- function(ipm,
 lambda.simple_di_stoch_kern_ipm <- function(ipm,
                                             type_lambda = 'stochastic',
                                             burn_in     = 0.1,
+                                            log         = TRUE,
                                             ...) {
-
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -978,12 +1094,20 @@ lambda.simple_di_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
+
 }
 
 #' @rdname lambda
@@ -992,6 +1116,7 @@ lambda.simple_di_stoch_kern_ipm <- function(ipm,
 lambda.simple_di_stoch_param_ipm <- function(ipm,
                                              type_lambda = 'stochastic',
                                              burn_in     = 0.1,
+                                             log         = TRUE,
                                              ...) {
 
   .check_lambda_args(ipm, type_lambda)
@@ -1007,12 +1132,20 @@ lambda.simple_di_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
+
 
 }
 
@@ -1022,6 +1155,7 @@ lambda.simple_di_stoch_param_ipm <- function(ipm,
 
 lambda.general_di_det_ipm <- function(ipm,
                                       type_lambda = 'last',
+                                      log = FALSE,
                                       ...) {
 
   .check_lambda_args(ipm, type_lambda)
@@ -1033,6 +1167,8 @@ lambda.general_di_det_ipm <- function(ipm,
                                          call. = FALSE))
 
   out <- .lambda_pop_size(ipm, all_lambdas = all_lams)
+
+  if(log) out <- log(out)
 
   return(out)
 }
@@ -1044,7 +1180,8 @@ lambda.general_di_det_ipm <- function(ipm,
 lambda.general_di_stoch_kern_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
-                                             burn_in     = 0.1) {
+                                             burn_in     = 0.1,
+                                             log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1059,12 +1196,20 @@ lambda.general_di_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+
+  return(out)
 }
 
 #' @rdname lambda
@@ -1073,7 +1218,8 @@ lambda.general_di_stoch_kern_ipm <- function(ipm,
 lambda.general_di_stoch_param_ipm <- function(ipm,
                                               ...,
                                               type_lambda = 'stochastic',
-                                              burn_in     = 0.1) {
+                                              burn_in     = 0.1,
+                                              log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1088,18 +1234,26 @@ lambda.general_di_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
+
 }
 
 #' @rdname lambda
 #' @export
 
-lambda.simple_dd_det_ipm <- function(ipm, type_lambda = "all", ...) {
+lambda.simple_dd_det_ipm <- function(ipm, type_lambda = "all", ..., log = FALSE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1110,6 +1264,8 @@ lambda.simple_dd_det_ipm <- function(ipm, type_lambda = "all", ...) {
                                          call. = FALSE))
 
   out <- .lambda_pop_size(ipm, all_lambdas = all_lams)
+
+  if(log) out <- log(out)
 
   return(out)
 }
@@ -1118,9 +1274,10 @@ lambda.simple_dd_det_ipm <- function(ipm, type_lambda = "all", ...) {
 #' @export
 
 lambda.simple_dd_stoch_kern_ipm <- function(ipm,
-                                             ...,
-                                             type_lambda = 'stochastic',
-                                             burn_in     = 0.1) {
+                                            ...,
+                                            type_lambda = 'stochastic',
+                                            burn_in     = 0.1,
+                                            log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1135,12 +1292,20 @@ lambda.simple_dd_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
+
 }
 
 #' @rdname lambda
@@ -1149,7 +1314,8 @@ lambda.simple_dd_stoch_kern_ipm <- function(ipm,
 lambda.simple_dd_stoch_param_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
-                                             burn_in     = 0.1) {
+                                             burn_in     = 0.1,
+                                             log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1164,12 +1330,19 @@ lambda.simple_dd_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
 }
 
 #' @rdname lambda
@@ -1177,7 +1350,8 @@ lambda.simple_dd_stoch_param_ipm <- function(ipm,
 
 lambda.general_dd_det_ipm <- function(ipm,
                                       type_lambda = 'last',
-                                      ...) {
+                                      ...,
+                                      log = FALSE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1188,6 +1362,8 @@ lambda.general_dd_det_ipm <- function(ipm,
                                          call. = FALSE))
 
   out <- .lambda_pop_size(ipm, all_lambdas = all_lams)
+
+  if(log) out <- log(out)
 
   return(out)
 }
@@ -1198,7 +1374,8 @@ lambda.general_dd_det_ipm <- function(ipm,
 lambda.general_dd_stoch_kern_ipm <- function(ipm,
                                             ...,
                                             type_lambda = 'stochastic',
-                                            burn_in     = 0.1) {
+                                            burn_in     = 0.1,
+                                            log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1213,12 +1390,20 @@ lambda.general_dd_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
+
 }
 
 #' @rdname lambda
@@ -1227,7 +1412,8 @@ lambda.general_dd_stoch_kern_ipm <- function(ipm,
 lambda.general_dd_stoch_param_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
-                                             burn_in     = 0.1) {
+                                             burn_in     = 0.1,
+                                             log = TRUE) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1242,12 +1428,19 @@ lambda.general_dd_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
-  return(
-    switch(type_lambda,
-           'all'        = temp,
-           'last'       = temp,
-           'stochastic' = .thin_stoch_lambda(temp, burn_ind))
-  )
+  out <- switch(type_lambda,
+                'all'        = temp,
+                'last'       = temp,
+                'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
+
+  if(type_lambda == "stochastic") {
+    if(log) {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+  }
+
+  return(out)
 }
 
 # Plot ---------------
@@ -1631,13 +1824,14 @@ plot.general_di_det_ipm <- function(x = NULL, y = NULL,
 #' @title Compute the standardized left and right eigenvectors via iteration
 #'
 #' @param ipm Output from \code{make_ipm()}.
+#' @param ... Other arguments passed to methods
 #'
 #' @return A list of named numeric vector(s) corresponding to the stable trait distribution
 #' function (\code{right_ev}) or the reproductive values for each trait (\code{left_ev}).
 #'
 #' @export
 
-right_ev <- function(ipm, iterations, tolerance) {
+right_ev <- function(ipm, ... ) {
 
   UseMethod('right_ev')
 
@@ -1652,7 +1846,8 @@ right_ev <- function(ipm, iterations, tolerance) {
 
 right_ev.simple_di_det_ipm <- function(ipm,
                                        iterations = 100,
-                                       tolerance = 1e-10) {
+                                       tolerance = 1e-10,
+                                       ...) {
 
   mod_nm <- deparse(substitute(ipm))
 
@@ -1812,11 +2007,57 @@ right_ev.simple_di_det_ipm <- function(ipm,
 }
 
 #' @rdname eigenvectors
+#' @param burn_in The proportion of early iterations to discard from the
+#' stochastic simulation
+#' @export
+
+right_ev.simple_di_stoch_kern_ipm <- function(ipm,
+                                              burn_in = 0.25,
+                                              ...) {
+
+  mod_nm <- deparse(substitute(ipm))
+
+  # Identify state variable name
+
+  pop_nm <- .get_pop_nm_simple(ipm)
+
+  out <- ipm$pop_state[!grepl("lambda", names(ipm$pop_state))]
+
+  burn_in_seq <- seq_len(ncol(out[[1]])) %>%
+    .[seq.int(from = ceiling(ncol(out[[1]]) * burn_in),
+              to   = ncol(out[[1]]),
+              by   = 1)]
+
+  out <- lapply(out,
+                function(x, burn_seq) x[ , burn_seq],
+                burn_seq = burn_in_seq)
+
+  # Normalize just in case. easy for simple IPMs where we know there's only
+  # one trait contributing to total population size. Tricker in general IPMs.
+
+  out[[1]] <- out[[1]] / colSums(out[[1]])
+
+  names(out) <- paste(pop_nm, 'w', sep = "_")
+
+  class(out) <- "ipmr_w"
+
+  return(out)
+
+}
+
+#' @rdname eigenvectors
+#' @export
+
+right_ev.simple_di_stoch_param_ipm <- right_ev.simple_di_stoch_kern_ipm
+
+
+#' @rdname eigenvectors
 #' @export
 
 right_ev.general_di_det_ipm <- function(ipm,
                                         iterations = 100,
-                                        tolerance = 1e-10) {
+                                        tolerance = 1e-10,
+                                        ...) {
 
   mod_nm    <- deparse(substitute(ipm))
 
@@ -1885,7 +2126,8 @@ right_ev.general_di_det_ipm <- function(ipm,
     }
   }
 
-  names(out) <- gsub('n_', '', names(out))
+  # Replaces the leading n_ with a trailing _v
+  names(out) <- substr(names(out), 3, nchar(names(out)))
   names(out) <- paste(names(out), 'w', sep = '_')
   class(out) <- "ipmr_w"
 
@@ -1893,12 +2135,60 @@ right_ev.general_di_det_ipm <- function(ipm,
   return(out)
 }
 
+#' @rdname eigenvectors
+#' @export
+
+right_ev.general_di_stoch_kern_ipm <- function(ipm,
+                                               burn_in = 0.25,
+                                               ...) {
+
+  mod_nm   <- deparse(substitute(ipm))
+
+  out      <- ipm$pop_state[!grepl("lambda", names(ipm$pop_state))]
+
+  burn_in_seq <- seq_len(ncol(out[[1]])) %>%
+    .[seq.int(from = ceiling(ncol(out[[1]]) * burn_in),
+              to   = ncol(out[[1]]),
+              by   = 1)]
+
+  out <- lapply(out,
+                function(x, burn_seq) x[ , burn_seq, drop = FALSE],
+                burn_seq = burn_in_seq)
+
+  # Normalize everything just in case
+
+  pop_sizes <- lapply(out, colSums) %>%
+    do.call(what = ".add", args = .)
+
+  for(i in seq_along(out)) {
+
+    for(j in seq_len(ncol(out[[1]]))) {
+
+      out[[i]][ , j] <- out[[i]][ ,j] / pop_sizes[j]
+
+    }
+  }
+
+  # Replaces the leading n_ with a trailing _v
+  names(out) <- substr(names(out), 3, nchar(names(out)))
+  names(out) <- paste(names(out), 'w', sep = '_')
+  class(out) <- "ipmr_w"
+
+
+  return(out)
+}
+
+#' @rdname eigenvectors
+#' @export
+
+right_ev.general_di_stoch_param_ipm <- right_ev.general_di_stoch_kern_ipm
+
 # left_ev -----------------
 
 #' @rdname eigenvectors
 #' @export
 
-left_ev <- function(ipm, iterations, tolerance) {
+left_ev <- function(ipm, ...) {
 
   UseMethod('left_ev')
 
@@ -1910,7 +2200,8 @@ left_ev <- function(ipm, iterations, tolerance) {
 
 left_ev.simple_di_det_ipm <- function(ipm,
                                       iterations = 100,
-                                      tolerance = 1e-10) {
+                                      tolerance = 1e-10,
+                                      ...) {
 
   mod_nm <- deparse(substitute(ipm))
 
@@ -1937,7 +2228,8 @@ left_ev.simple_di_det_ipm <- function(ipm,
     define_pop_state(!! pop_states[1] := init_pop) %>%
     make_ipm(iterate = TRUE,
              iterations = iterations,
-             iteration_direction = "left")
+             iteration_direction = "left",
+             normalize_pop_size = TRUE)
 
   if(is_conv_to_asymptotic(test_conv,
                            tol = tolerance)) {
@@ -1972,8 +2264,71 @@ left_ev.simple_di_det_ipm <- function(ipm,
 }
 
 #' @rdname eigenvectors
+#' @param kernel_seq The sequece of parameter set indices used to select kernels
+#' during the iteration procedure. If \code{NULL}, will use the sequence stored
+#' in the \code{ipm} object. Should usually be left as \code{NULL}.
+#' @export
+
+left_ev.simple_di_stoch_kern_ipm <- function(ipm,
+                                             iterations = 10000,
+                                             burn_in    = 0.25,
+                                             kernel_seq = NULL,
+                                             ...) {
+
+  mod_nm <- deparse(substitute(ipm))
+
+  # Identify state variable name
+
+  pop_nm <- .get_pop_nm_simple(ipm)
+
+  # Create variables for internal usage
+
+  pop_states  <- paste('n', pop_nm, c('t', 't_1'), sep = '_')
+
+  # Final step is to generate an initial pop_state. This is always just
+  # vector drawn from a random uniform distribution
+
+  len_pop_state <- nrow(ipm$sub_kernels[[1]])
+  init_pop      <- stats::runif(len_pop_state)
+  if(is.null(kernel_seq)) kernel_seq <- ipm$env_seq
+
+  # Drop _t for defining the initial population vector so define_pop_state
+  # doesn't complain
+
+  pop_states[1] <- gsub("_t$", "", pop_states[1])
+
+  test_conv     <- ipm$proto_ipm %>%
+    define_pop_state(!! pop_states[1] := init_pop) %>%
+    make_ipm(iterate = TRUE,
+             iterations = iterations,
+             iteration_direction = "left",
+             normalize_pop_size = TRUE,
+             kernel_seq = kernel_seq)
+
+    out    <- test_conv$pop_state
+    out$lambda <- NULL
+
+    burn_in_seq <- seq_len(ncol(out[[1]])) %>%
+      .[seq.int(from = ceiling(ncol(out[[1]]) * burn_in),
+                to   = ncol(out[[1]]),
+                by   = 1)]
+
+    out <- lapply(out,
+                  function(x, burn_seq) x[ , burn_seq],
+                  burn_seq = burn_in_seq)
+
+    out_nm <- paste(pop_nm, 'v', sep = "_")
+
+    names(out) <- out_nm
+    class(out) <- "ipmr_v"
+
+    return(out)
+}
+
+#' @rdname eigenvectors
 #'
-#' @details For \code{right_ev}, if the model has already been iterated and has
+#' @section \strong{Deterministic eigenvectors}:
+#'  For \code{right_ev}, if the model has already been iterated and has
 #' converged to asymptotic dynamics, then it will just extract the final
 #' population state and return that in a named list. Each element of the list
 #' is a vector with length \code{>= 1} and corresponds each state variable's
@@ -1992,11 +2347,26 @@ left_ev.simple_di_det_ipm <- function(ipm,
 #' in the model's \code{proto_ipm} object. The model is then iterated for
 #' \code{iterations} times to produce a standardized left eigenvector.
 #'
+#' @section \strong{Stochastic eigenvectors}:
+#' \code{left_ev} and \code{right_ev} return different things for stochastic models.
+#' \code{right_ev} returns the trait distribution through time from the stochastic
+#' simulation (i.e. \code{ipm$pop_state}), and normalizes it such that the
+#' distribution at each time step integrates to 1 (if it is not already).
+#' It then discards the first \code{burn_in * iterations} time steps of the
+#' simulation to eliminate transient dynamics. See Ellner, Childs, & Rees 2016,
+#' Chapter 7.5 for more details.
+#'
+#' \code{left_ev} returns a similar result as \code{right_ev}, except the trait
+#' distributions are the result of left multiplying the kernel and trait
+#'  distribution. See Ellner, Childs, & Rees 2016, Chapter 7.5 for more
+#' details.
+#'
 #' @export
 
 left_ev.general_di_det_ipm <- function(ipm,
                                        iterations = 100,
-                                       tolerance = 1e-10) {
+                                       tolerance = 1e-10,
+                                       ...) {
 
   mod_nm    <- deparse(substitute(ipm))
 
@@ -2013,7 +2383,7 @@ left_ev.general_di_det_ipm <- function(ipm,
     make_ipm(iterate    = TRUE,
              iterations = iterations,
              iteration_direction = "left",
-             normalize_pop_size = FALSE)
+             normalize_pop_size = TRUE)
 
   if(is_conv_to_asymptotic(test_conv, tol = tolerance)) {
 
@@ -2037,8 +2407,8 @@ left_ev.general_di_det_ipm <- function(ipm,
 
   }
 
-
-  names(out) <- gsub('n_', '', names(out))
+  # Replaces the leading n_ with a trailing _v
+  names(out) <- substr(names(out), 3, nchar(names(out)))
   names(out) <- paste(names(out), 'v', sep = '_')
 
   class(out) <- "ipmr_v"
@@ -2046,12 +2416,167 @@ left_ev.general_di_det_ipm <- function(ipm,
   return(out)
 }
 
-# diagnose ---------------
+#' @rdname eigenvectors
+#' @export
 
-diagnose <- function(ipm, ...) {
+left_ev.general_di_stoch_kern_ipm <- function(ipm,
+                                              iterations = 10000,
+                                              burn_in    = 0.25,
+                                              kernel_seq = NULL,
+                                              ...) {
 
-  UseMethod('diagnose')
+  mod_nm    <- deparse(substitute(ipm))
 
+  use_pop_state      <- ipm$pop_state[!grepl("lambda", names(ipm$pop_state))]
+
+  init_pop_vec       <- lapply(use_pop_state, function(x) x[ , 1])
+
+  names(init_pop_vec) <- gsub('pop_state', 'n', names(init_pop_vec))
+
+  if(is.null(kernel_seq)) kernel_seq <- ipm$env_seq
+
+  test_conv           <- ipm$proto_ipm %>%
+    define_pop_state(
+      pop_vectors = init_pop_vec
+    ) %>%
+    make_ipm(iterate    = TRUE,
+             iterations = iterations,
+             iteration_direction = "left",
+             normalize_pop_size = TRUE,
+             kernel_seq = kernel_seq)
+
+  out <- test_conv$pop_state[!grepl('lambda', names(test_conv$pop_state))]
+
+  burn_in_seq <- seq_len(ncol(out[[1]])) %>%
+    .[seq.int(from = ceiling(ncol(out[[1]]) * burn_in),
+              to   = ncol(out[[1]]),
+              by   = 1)]
+
+  out <- lapply(out,
+                function(x, burn_seq) x[ , burn_seq, drop = FALSE],
+                burn_seq = burn_in_seq)
+
+  # Replaces the leading n_ with a trailing _v
+  names(out) <- substr(names(out), 3, nchar(names(out)))
+  names(out) <- paste(names(out), 'v', sep = '_')
+
+  class(out) <- "ipmr_v"
+
+  return(out)
+}
+
+#' @rdname eigenvectors
+#' @export
+
+# Needs to re-iterate the model, but use the same kernel sequence that is used
+# in right_ev/make_ipm. In effect, we want a deterministic model using the
+# sub-kernels slot in lieu of parameters.
+
+left_ev.general_di_stoch_param_ipm <- function(ipm,
+                                               iterations = 10000,
+                                               burn_in = 0.25,
+                                               kernel_seq = NULL,
+                                               ...) {
+
+  mod_nm      <- deparse(substitute(ipm))
+
+  sub_kernels <- ipm$sub_kernels
+  proto_ipm   <- ipm$proto_ipm
+
+  # Set up the model iteration expressions and initial population state.
+  # This is a leaner version of make_ipm.general_di_stoch_param, because
+  # we don't need all the user functions or other stuff - just the basic
+  # infrastructure to house model iteration evaluation.
+
+  proto_list <- .initialize_kernels(proto_ipm,
+                                    iterate = TRUE,
+                                    iter_dir = "left")
+
+  others <- proto_list$others
+  k_row  <- proto_list$k_row
+
+  main_env <- .make_main_env(others$domain,
+                             proto_ipm$usr_funs[[1]],
+                             age_size = .uses_age(others))
+
+
+  temp      <- .prep_di_output(others, k_row, proto_ipm,
+                               iterations, normal= TRUE)
+  main_env  <- .add_pop_state_to_main_env(temp$pop_state, main_env)
+
+  # Throw this in just in case we have parameter set indices in addition
+  # to continuous environmental variation.
+
+  kern_seq <- .make_kern_seq(others, iterations, kernel_seq)
+
+  # Create an index to select sub-kernels based on which iteration they were
+  # generated in.
+
+  kern_it_ind <- vapply(names(sub_kernels), function(x) {
+    as.integer(strsplit(x, "(_it_)")[[1]][2])
+  }, integer(1L))
+
+  for(i in seq_len(iterations)) {
+
+    # This selects sub-kernels by matching the _it_XXX suffix to the current
+    # iteration.
+    use_kerns <- sub_kernels[kern_it_ind == i]
+
+    # Now, drop the _it_XXX suffix and pretend they're just regular kernels
+    # generated by .make_sub_kernel_general_lazy.
+
+    rm_regex <- paste("_it_", i, '$', sep = "")
+    names(use_kerns) <- gsub(rm_regex, "", names(use_kerns))
+
+    # We don't care about any of the other output from model iteration this,
+    # so skip all the naming/stashing other outputs.
+
+    pop_state <- .iterate_model(proto_ipm = proto_ipm,
+                                k_row = k_row,
+                                sub_kern_list = use_kerns,
+                                current_iteration = i,
+                                kern_seq = kern_seq,
+                                pop_state = temp$pop_state,
+                                main_env = main_env,
+                                normal = TRUE)
+
+    temp$pop_state <- pop_state
+  }
+
+  out <- temp$pop_state
+  out[grepl("lambda", names(out))] <- NULL
+
+  burn_in_seq <- seq_len(ncol(out[[1]])) %>%
+    .[seq.int(from = ceiling(ncol(out[[1]]) * burn_in),
+              to   = ncol(out[[1]]),
+              by   = 1)]
+
+  out <- lapply(out,
+                function(x, burn_seq) x[ , burn_seq, drop = FALSE],
+                burn_seq = burn_in_seq)
+
+
+  names(out) <- substr(names(out), 3, nchar(names(out)))
+  names(out) <- paste(names(out), 'v', sep = '_')
+
+  class(out) <- "ipmr_v"
+
+  return(out)
+}
+
+#' @rdname eigenvectors
+#' @export
+
+left_ev.simple_di_stoch_param_ipm <- left_ev.general_di_stoch_param_ipm
+
+#' @noRd
+# Helper to be used in do.call(".add", X) where X is a list with potentially more
+# than two elements. "+" won't work in this case, and sum() will return a single
+# number.
+
+.add <- function(...) {
+  dots <- list(...)
+  Reduce("+", x = dots, init = 0)
 }
 
 

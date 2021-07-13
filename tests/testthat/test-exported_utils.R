@@ -185,6 +185,15 @@ test_that("int_mesh works as expected", {
   expect_equal(length(mesh_ps$dbh_1), 10000L)
   expect_equal(length(mesh_ps$d_dbh), 1L)
 
+
+  mesh_ps <- int_mesh(sim_di_det_2, full_mesh = FALSE)
+  dummy_seq <- seq(0, 50, length.out = 101)
+  dummy_z   <- 0.5 * (dummy_seq[2:101] + dummy_seq[1:100])
+
+  expect_equal(mesh_ps$dbh_1, dummy_z)
+  expect_equal(mesh_ps$dbh_2, dummy_z)
+  expect_equal(mesh_ps$d_dbh, dummy_z[2] - dummy_z[1])
+
 })
 
 test_that("parameters gets and sets correctly", {
@@ -607,5 +616,47 @@ test_that("vital_rate_funs returns correctly for stoch_param/dd models", {
   nms <- paste(nms[,1], nms[,2], sep = "_")
 
   expect_true(all(nms %in% names(vrs)))
+
+})
+
+test_that("conv_plot works correctly", {
+
+  x <- conv_plot(gen_di_stoch_param)
+  expect_s3_class(x, "general_di_stoch_param_ipm")
+
+  x <- conv_plot(gen_di_stoch_param, log = TRUE)
+
+  expect_s3_class(x, "general_di_stoch_param_ipm")
+
+
+})
+
+
+test_that("discretize_pop_vec works correctly", {
+
+  data(iceplant_ex)
+  zs <- iceplant_ex$log_size
+  pv_ipmr <- discretize_pop_vector(zs,
+                                   100,
+                                   1.2,
+                                   1.2,
+                                   normalize = TRUE)
+
+  expect_equal(names(pv_ipmr), c("n_zs", "midpoints_zs"))
+
+  expect_warning(discretize_pop_vector(zs,
+                                       100,
+                                       1.2,
+                                       1.2,
+                                       na.rm = FALSE))
+
+  temp <- suppressWarnings(discretize_pop_vector(zs,
+                                                 100,
+                                                 1.2,
+                                                 1.2,
+                                                 na.rm = FALSE))
+
+  expect_equal(temp$n_zs, NA_real_)
+  expect_equal(temp$midpoints_zs, NA_real_)
 
 })

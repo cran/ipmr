@@ -60,6 +60,14 @@
 #' functions should return named lists. Names in that list can be referenced in
 #' vital rate expressions and/or kernel formulas.
 #'
+#' \strong{\code{discretize_pop_vec}}
+#'
+#' This takes a numeric vector of a trait distribution and computes the relative
+#' frequency of trait values. By default, it integrates the kernel density estimate
+#' of the trait using the midpoint rule with \code{n_mesh} mesh points.
+#' This is helpful for creating an initial population state vector that
+#' corresponds to an observed trait distribution.
+#'
 #' @return All \code{define_*} functions return a proto_ipm. \code{make_impl_args_list}
 #' returns a list, and so must be used within a call to \code{define_impl} or
 #' before initiating the model creation procedure.
@@ -129,6 +137,14 @@
 #'
 #' )
 #'
+#' data(iceplant_ex)
+#'
+#' z <- c(iceplant_ex$log_size, iceplant_ex$log_size_next)
+#'
+#' pop_vecs <- discretize_pop_vector(z,
+#'                                   n_mesh = 100,
+#'                                   pad_low = 1.2,
+#'                                   pad_high = 1.2)
 #'
 #' @rdname define_star
 #' @importFrom rlang is_empty
@@ -297,9 +313,6 @@ left_mult <- function(kernel, vectr) {
   }
 
   if(!is.integer(y)) {
-
-    warning("`%^%` is coercing second argument to an integer",
-            call. = FALSE)
 
     y <- as.integer(y)
 
@@ -1073,9 +1086,11 @@ parameters.default <- function(object) {
 #' @param ipm An object created by \code{make_ipm()}. This argument only applies to
 #' \code{int_mesh()} and \code{vital_rate_funs()} (because these are not built
 #' until \code{make_ipm()} is called).
+#' @param full_mesh Return the full integration mesh? Default is \code{TRUE}.
+#' \code{FALSE} returns only unique values for each state variable.
 #' @export
 
-int_mesh <- function(ipm) {
+int_mesh <- function(ipm, full_mesh = TRUE) {
 
   if(!"main_env" %in% names(ipm$env_list)) {
     stop("Cannot find the 'main_env' object in the IPM. Do you need to re-run\n",
@@ -1113,6 +1128,10 @@ int_mesh <- function(ipm) {
                              all_nms,
                              default = NULL,
                              inherit = FALSE)
+
+  if(!full_mesh) {
+    out <- lapply(out, unique)
+  }
 
   class(out) <- c("ipmr_mp_mesh", "list")
 
@@ -1546,3 +1565,155 @@ make_iter_kernel <- function(ipm,
   return(out)
 
 }
+
+#' @rdname check_convergence
+#' @param iterations The range of iterations to plot \code{lambda} for. The default
+#' is every iteration.
+#' @param log A logical indicating whether log transform \code{lambda}.
+#' @param show_stable A logical indicating whether or not to draw a line indicating
+#' population stability at \code{lambda = 1}.
+#' @param ... Further arguments to \code{plot}.
+#'
+#' @details Plotting can be controlled by passing additional graphing parameters
+#' to \code{...}.
+#'
+#' @examples
+#' data(gen_di_det_ex)
+#'
+#' proto <- gen_di_det_ex$proto_ipm %>%
+#'   define_pop_state(n_ht = runif(200),
+#'                    n_b  = 200000)
+#'
+#' ipm <- make_ipm(proto)
+#'
+#' is_conv_to_asymptotic(ipm, tol = 1e-5)
+#' conv_plot(ipm)
+#'
+#' @export
+
+conv_plot <- function(ipm, iterations = NULL,
+                      log = FALSE, show_stable = TRUE, ...) {
+
+  all_lams <- lambda(ipm, type_lambda = "all", log = log)
+  nms      <- colnames(all_lams)
+
+  dots     <- list(...)
+
+  if(is.null(iterations)) {
+
+    iterations <- seq(1, nrow(all_lams), by = 1)
+  }
+
+  all_lams <- all_lams[iterations, , drop = FALSE]
+
+  if(!"type" %in% names(dots)) {
+    dots$type <- "l"
+  }
+
+  if(log) {
+    y_nm <- expression(paste("Single Time Step Log(  ", lambda, ")"))
+    nms  <- paste("Log(", nms, ")", sep = "")
+    # all_lams <- apply(all_lams, MARGIN = 2, FUN = log)
+  } else {
+    y_nm <- expression(paste("Single Time Step   ", lambda))
+  }
+
+  for(i in seq_len(ncol(all_lams))) {
+
+    all_args <- c(list(y    = all_lams[ , i],
+                       x    = iterations,
+                       main = nms[i],
+                       xlab = "Transition",
+                       ylab = y_nm),
+                  dots)
+    # plot(all_lams[ , i], main = nms[i], type = type, dots)
+    do.call("plot", all_args)
+
+    if(show_stable) {
+      abline(h = 1, col = "grey40", lty = 2)
+    }
+
+  }
+
+  invisible(ipm)
+
+}
+
+
+#' @rdname define_star
+#'
+#' @param trait_values A numeric vector of trait values.
+#' @param n_mesh The number of meshpoints to use when integrating the trait
+#' distribution.
+#' @param pad_low The amount to pad the smallest value by, expressed as a
+#' proportion. For example, 0.8 would shrink the smallest value by 20\%.
+#' @param pad_high The amount to pad the largest value by, expressed as a
+#' proportion. For example, 1.2 would increase the largest value by 20\%.
+#' @param normalize A logical indicating whether to normalize the result to sum
+#' to 1.
+#' @param na.rm A logical indicating whether to remove \code{NA}s from
+#' \code{trait_distrib}. If \code{FALSE} and \code{trait_values} contains
+#' \code{NA}s, returns a \code{NA} with a warning
+#'
+#' @export
+#' @importFrom stats na.omit bw.nrd0 dnorm
+
+discretize_pop_vector <- function(trait_values,
+                                  n_mesh,
+                                  pad_low = NULL,
+                                  pad_high = NULL,
+                                  normalize = TRUE,
+                                  na.rm = TRUE) {
+
+  hi     <- max(trait_values, na.rm = na.rm) * pad_high
+  lo     <- min(trait_values, na.rm = na.rm) * pad_low
+
+  nm <- deparse(substitute(trait_values))
+  out_x  <- paste("midpoints_", nm, sep = "")
+
+  out_nm <- paste("n_", nm, sep = "")
+
+  if(na.rm) {
+
+    trait_values <- stats::na.omit(trait_values)
+
+  } else {
+    warning("NAs detected in ", nm, " - returning NA!")
+
+    return(rlang::list2(!!out_nm := NA_real_,
+                        !!out_x  := NA_real_))
+  }
+
+  bs     <- seq(lo, hi, length.out = n_mesh + 1)
+  mesh   <- (bs[2:(n_mesh + 1)] + bs[1:n_mesh]) * 0.5
+  h <- hi - lo / n_mesh
+
+  # stats::density won't get quite the same bin midpoints that ipmr
+  # generates internally. However, we can use Gaussian kernel with
+  # the nrd0 bandwidth to get what we want (I think).
+  # Credit for following to Stephen Ellison:
+  # https://stat.ethz.ch/pipermail/r-help/2011-June/282196.html
+
+  bw     <-  stats::bw.nrd0(trait_values)
+
+  at     <- matrix(mesh, ncol = 1)
+  out    <- apply(at, 1,
+                  FUN = function(a, x, bw) {
+
+                    sum(stats::dnorm(a, x, bw) / length(x))
+
+                  },
+                  x   = trait_values,
+                  bw  = bw)
+
+  out <- out * h
+
+  if(normalize) out <- out / sum(out)
+
+  out <- rlang::list2(!!out_nm := out,
+                      !!out_x  := mesh)
+
+  return(out)
+
+}
+

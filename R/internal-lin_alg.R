@@ -381,6 +381,8 @@
 
       dimnames(out) <- list(NULL, names(lams))
 
+    } else {
+      names(out) <- names(lams)
     }
     return(out)
 
@@ -436,12 +438,17 @@ is_square <- function(x) {
 #' @rdname check_convergence
 #' @title Check for model convergence to asymptotic dynamics
 #'
-#' @param ipm An object returned by \code{make_ipm()}.
-#' @param tol The tolerance for convergence. Convergence is evaluated by making an
-#' element by element comparison  for the population state vectors at time \emph{t}
-#' and \emph{t-1}.
+#' @description Checks for convergence to asymptotic dynamics numerically and
+#' visually. \code{is_conv_to_asymptotic} checks whether
+#' \code{lambda[iterations - 1]} equals \code{lambda[iterations]} within the
+#' specified tolerance, \code{tol}. \code{conv_plot} plots the time series of
+#' \code{lambda} (or \code{log(lambda)}.
 #'
-#' @return Either \code{TRUE} or \code{FALSE}.
+#' @param ipm An object returned by \code{make_ipm()}.
+#' @param tol The tolerance for convergence.
+#'
+#' @return \code{is_conv_to_asymptotic}: Either \code{TRUE} or \code{FALSE}.
+#' \code{conv_plot}: code{ipm} invisibly.
 #' @export
 #'
 
@@ -463,15 +470,16 @@ is_conv_to_asymptotic <- function(ipm, tol = 1e-10) {
 
   if(!all(is.na(unlist(lambdas)))) {
 
-    convs <- vapply(lambdas, function(x) {
+    convs <- vapply(lambdas, function(x, tol) {
 
       end <- length(x)
       start <- end - 1
 
-      isTRUE(all.equal(x[start], x[end]))
+      isTRUE(all.equal(x[start], x[end], tolerance = tol))
 
     },
-    logical(1L))
+    logical(1L),
+    tol = tol)
 
     return(convs)
 
@@ -767,12 +775,14 @@ is_conv_to_asymptotic <- function(ipm, tol = 1e-10) {
 # Helper function to handle when burn_in == 0
 #' @noRd
 
-.thin_stoch_lambda <- function(lambdas, burn_ind) {
+.thin_stoch_lambda <- function(lambdas, burn_ind, log) {
+
+  if(log) lambdas <- log(lambdas)
 
   if(length(burn_ind > 0)) {
-    out <- mean(log(lambdas[-c(burn_ind)]))
+    out <- mean(lambdas[-c(burn_ind)])
   } else {
-    out <- mean(log(lambdas))
+    out <- mean(lambdas)
   }
 
   return(out)
