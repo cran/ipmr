@@ -8,6 +8,7 @@
 \alias{vital_rate_exprs.proto_ipm}
 \alias{vital_rate_exprs.default}
 \alias{vital_rate_funs}
+\alias{vital_rate_funs.ipmr_ipm}
 \alias{vital_rate_exprs<-}
 \alias{vital_rate_exprs<-.proto_ipm}
 \alias{new_fun_form}
@@ -22,6 +23,7 @@
 \alias{parameters<-}
 \alias{parameters<-.proto_ipm}
 \alias{int_mesh}
+\alias{int_mesh.ipmr_ipm}
 \alias{pop_state}
 \alias{pop_state.proto_ipm}
 \alias{pop_state.default}
@@ -40,6 +42,8 @@ vital_rate_exprs(object)
 \method{vital_rate_exprs}{default}(object)
 
 vital_rate_funs(ipm)
+
+\method{vital_rate_funs}{ipmr_ipm}(ipm)
 
 vital_rate_exprs(object, kernel, vital_rate) <- value
 
@@ -63,11 +67,13 @@ parameters(object)
 
 \method{parameters}{default}(object)
 
-parameters(object) <- value
+parameters(object, ...) <- value
 
-\method{parameters}{proto_ipm}(object) <- value
+\method{parameters}{proto_ipm}(object, ...) <- value
 
 int_mesh(ipm, full_mesh = TRUE)
+
+\method{int_mesh}{ipmr_ipm}(ipm, full_mesh = TRUE)
 
 pop_state(object)
 
@@ -79,8 +85,8 @@ pop_state(object)
 \item{object}{A \code{proto_ipm} or object created by \code{make_ipm()}.}
 
 \item{ipm}{An object created by \code{make_ipm()}. This argument only applies to
-\code{int_mesh()} and \code{vital_rate_funs()} (because these are not built
-until \code{make_ipm()} is called).}
+\code{int_mesh()} and \code{vital_rate_funs()} (because these quantities don't
+exist until \code{make_ipm()} is called).}
 
 \item{kernel}{The name of the kernel to insert the new vital rate expression
 into.}
@@ -96,6 +102,8 @@ The new functional form must be wrapped in a call to \code{new_fun_form}.}
 
 \item{form}{An expression representing the new vital rate or kernel formula
 to insert.}
+
+\item{...}{Additional arguments used in \code{RPadrino} methods.}
 
 \item{full_mesh}{Return the full integration mesh? Default is \code{TRUE}.
 \code{FALSE} returns only unique values for each state variable.}

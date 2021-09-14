@@ -79,9 +79,10 @@
 
       return(out)
     },
-    main_env = main_env)
+    main_env = main_env) %>%
+    .flatten_to_depth(1L)
 
-  nms <- lapply(env_state_funs, names) %>% unlist()
+  nms <- names(env_state_funs)
 
   ind <- duplicated(nms)
 
@@ -249,9 +250,10 @@
 
       return(out)
     },
-    main_env = main_env)
+    main_env = main_env) %>%
+    .flatten_to_depth(1L)
 
-  nms <- lapply(env_state_funs, names) %>% unlist()
+  nms <- names(env_state_funs)
 
   ind <- duplicated(nms)
 
@@ -288,15 +290,23 @@
 
 .bind_env_exprs <- function(main_env, env_funs) {
 
-  nms <- lapply(env_funs, names) %>% unlist()
-  env_funs <- .flatten_to_depth(env_funs, 1L)
+  nms <- names(env_funs)
+
+  rlang::env_bind_lazy(main_env, !!! env_funs, .eval_env = main_env)
 
   for(i in seq_along(nms)) {
 
     # This does the binding so that values are accessible by the names
     # the user gives them.
 
-    temp <- rlang::eval_tidy(env_funs[[i]])
+    # temp <- rlang::eval_tidy(env_funs[[i]])
+    temp <- rlang::env_get(main_env, nms[i])
+
+    if(!rlang::is_list(temp)) {
+
+      temp <- rlang::list2(!!nms[i] := temp)
+
+    }
 
     rlang::env_bind(main_env, !!! temp)
 
@@ -778,8 +788,10 @@
   # Add in user specified functions. These need to be in the main_env
   # so all kernels can access them during evaluation
 
-  rlang::env_bind(main_env,
-                  !!! usr_funs)
+  if(rlang::is_named(usr_funs)){
+    rlang::env_bind(main_env,
+                    !!! usr_funs)
+  }
 
   invisible(main_env)
 }
@@ -1285,6 +1297,10 @@
 
 .valid_it_mat <- function(mat, kern_name) {
 
+  if(any(is.na(mat))) {
+    stop(kern_name, " contains one or more NAs. Double check model parameterization.")
+  }
+
   # Finally, we need to check for floating point errors that generate
   # entries slightly less than 0, and correct those.
 
@@ -1293,8 +1309,8 @@
     min_0 <- min(mat[mat < 0])
     max_0 <- max(mat[mat < 0])
 
-    if(isTRUE(all.equal(min_0, 0, tolerance = 1e-15)) &&
-       isTRUE(all.equal(max_0, 0, tolerance = 1e-15))) {
+    if(isTRUE(all.equal(min_0, 0, tolerance = 1e-10)) &&
+       isTRUE(all.equal(max_0, 0, tolerance = 1e-10))) {
 
       mat[mat < 0] <- 0
 

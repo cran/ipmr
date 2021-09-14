@@ -201,12 +201,28 @@ define_env_state <- function(proto_ipm, ..., data_list = list()) {
 
   env_quos            <- rlang::enquos(...)
 
+  data_list           <- lapply(
+    data_list,
+    function(x) {
+      attr(x, "flat_protect") <- TRUE
+
+      na_test <- suppressWarnings(any(is.na(x)))
+
+      if(na_test) {
+        warning("'data_list' in 'define_env_state()' contains NAs. Is this correct?",
+                call. = FALSE)
+      }
+
+      return(x)
+    })
+
   out                 <- list(env_quos = unlist(env_quos),
                               constants = data_list)
 
   proto_ipm$env_state <- list(out)
 
   return(proto_ipm)
+
 }
 
 #' @title Predict methods in ipmr
@@ -759,6 +775,15 @@ vital_rate_exprs.default <- function(object) {
 
 vital_rate_funs <- function(ipm) {
 
+  UseMethod("vital_rate_funs")
+
+}
+
+#' @rdname accessors
+#' @export
+
+vital_rate_funs.ipmr_ipm <- function(ipm) {
+
   proto    <- .initialize_kernels(ipm$proto_ipm, TRUE, "right")$others
 
   env_list <- ipm$env_list
@@ -1040,22 +1065,31 @@ parameters.default <- function(object) {
 #' @rdname accessors
 #' @export
 
-`parameters<-` <- function(object, value) {
+`parameters<-` <- function(object, ..., value) {
 
   UseMethod("parameters<-")
 
 }
 
 #' @rdname accessors
+#' @param ... Additional arguments used in \code{RPadrino} methods.
 #' @param value For \code{parameters<-}, a named list of new parameters. The new list does not need
 #' to contain all of the parameters, just the ones to update/append. For
 #' \code{vital_rate_exprs<-} and \code{kernel_formulae<-}, a new functional form.
 #' The new functional form must be wrapped in a call to \code{new_fun_form}.
 #' @export
 
-`parameters<-.proto_ipm` <- function(object, value) {
+`parameters<-.proto_ipm` <- function(object, ..., value) {
 
-  value <- lapply(value, .protect_model)
+  value <- lapply(value, function(x) {
+    x <- .protect_model(x)
+    if(any(is.na(x))) {
+      warning("New parameter values set with 'parameters()' contain NA.",
+              " Is this correct?",
+              call. = FALSE)
+    }
+    return(x)
+  })
 
   for(i in seq_len(nrow(object))) {
 
@@ -1084,13 +1118,20 @@ parameters.default <- function(object) {
 
 #' @rdname accessors
 #' @param ipm An object created by \code{make_ipm()}. This argument only applies to
-#' \code{int_mesh()} and \code{vital_rate_funs()} (because these are not built
-#' until \code{make_ipm()} is called).
+#' \code{int_mesh()} and \code{vital_rate_funs()} (because these quantities don't
+#' exist until \code{make_ipm()} is called).
 #' @param full_mesh Return the full integration mesh? Default is \code{TRUE}.
 #' \code{FALSE} returns only unique values for each state variable.
 #' @export
 
 int_mesh <- function(ipm, full_mesh = TRUE) {
+  UseMethod("int_mesh")
+}
+
+#' @rdname accessors
+#' @export
+
+int_mesh.ipmr_ipm <- function(ipm, full_mesh = TRUE) {
 
   if(!"main_env" %in% names(ipm$env_list)) {
     stop("Cannot find the 'main_env' object in the IPM. Do you need to re-run\n",
@@ -1456,10 +1497,16 @@ ipm_to_df.default <- function(ipm,
 #'
 #' @export
 
-make_iter_kernel <- function(ipm,
-                             mega_mat = NULL,
-                             name_ps = NULL,
-                             f_forms = NULL) {
+make_iter_kernel <- function(ipm, ..., name_ps, f_forms) {
+  UseMethod("make_iter_kernel")
+}
+
+#' @export
+make_iter_kernel.ipmr_ipm <- function(ipm,
+                                      ...,
+                                      mega_mat = NULL,
+                                      name_ps = NULL,
+                                      f_forms = NULL) {
 
   cls_switch <- as.character(grepl("simple", class(ipm)[1]))
 
@@ -1481,6 +1528,8 @@ make_iter_kernel <- function(ipm,
 
 }
 
+#' @noRd
+
 .make_iter_kernel <- function(ipm, ...) {
 
   UseMethod(".make_iter_kernel")
@@ -1496,6 +1545,9 @@ make_iter_kernel <- function(ipm,
   base_nms  <- proto$kernel_id
 
   all_kerns <- ipm$sub_kernels
+  init_mat <- matrix(0,
+                     nrow = nrow(all_kerns[[1]]),
+                     ncol = ncol(all_kerns[[1]]))
 
   # Check for grouping effects
   if(any(proto$uses_par_sets)) {
@@ -1531,7 +1583,7 @@ make_iter_kernel <- function(ipm,
 
       kern_nms <- all_args[[i]]
 
-      out[[i]] <- do.call(`+`, all_kerns[kern_nms])
+      out[[i]] <- Reduce("+", all_kerns[kern_nms], init = init_mat)
 
       names(out)[i] <- paste("mega_matrix_", levs[i], sep = "")
     }
@@ -1540,7 +1592,7 @@ make_iter_kernel <- function(ipm,
 
     use_kerns <- ipm$sub_kernels
 
-    out <- list(mega_matrix = do.call(`+`, all_kerns))
+    out <- list(mega_matrix = Reduce("+", all_kerns, init = init_mat))
   }
   return(out)
 
@@ -1591,8 +1643,15 @@ make_iter_kernel <- function(ipm,
 #'
 #' @export
 
-conv_plot <- function(ipm, iterations = NULL,
-                      log = FALSE, show_stable = TRUE, ...) {
+conv_plot <- function(ipm, iterations, log, show_stable, ...) {
+  UseMethod("conv_plot")
+}
+
+#' @rdname check_convergence
+#' @export
+
+conv_plot.ipmr_ipm <- function(ipm, iterations = NULL,
+                               log = FALSE, show_stable = TRUE, ...) {
 
   all_lams <- lambda(ipm, type_lambda = "all", log = log)
   nms      <- colnames(all_lams)
@@ -1620,9 +1679,10 @@ conv_plot <- function(ipm, iterations = NULL,
 
   for(i in seq_len(ncol(all_lams))) {
 
+    if(!"main" %in% names(dots)) dots$main <- nms[i]
+
     all_args <- c(list(y    = all_lams[ , i],
                        x    = iterations,
-                       main = nms[i],
                        xlab = "Transition",
                        ylab = y_nm),
                   dots)
@@ -1630,7 +1690,8 @@ conv_plot <- function(ipm, iterations = NULL,
     do.call("plot", all_args)
 
     if(show_stable) {
-      abline(h = 1, col = "grey40", lty = 2)
+      h_line <- ifelse(log, 0, 1)
+      abline(h = h_line, col = "grey40", lty = 2)
     }
 
   }
