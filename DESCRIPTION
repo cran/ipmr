@@ -1,6 +1,6 @@
 Package: ipmr
 Title: Integral Projection Models
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: c( 
     person(given = "Sam",
            family = "Levin",
@@ -26,7 +26,11 @@ Authors@R: c(
     person(given = "Tiffany",
            family = "Knight",
            email = "tiffany.knight@idiv.de",
-           role = "aut"))
+           role = "aut"),
+    person(given = "Eric",
+           family = "Scott",
+           email  = "scottericr@gmail.com",
+           role   = "ctb"))
 Description: Flexibly implements Integral Projection Models using a
   mathematical(ish) syntax. This package will not help with the vital rate
   modeling process, but will help convert those regression models into an
@@ -44,27 +48,28 @@ Description: Flexibly implements Integral Projection Models using a
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: knitr, lme4, mvtnorm, rmarkdown, roxygen2, spelling,
-        testthat, covr
+Suggests: covr, knitr, lme4, mvtnorm, rmarkdown, roxygen2, spelling,
+        testthat, tools
 VignetteBuilder: knitr
 Language: en-US
 Imports: graphics, grDevices, magrittr, methods, purrr (>= 0.3.0),
         rlang (>= 0.3.0), stats, utils, Rcpp
-Depends: R (>= 3.2.3)
-RoxygenNote: 7.1.1
+Depends: R (>= 3.4)
+RoxygenNote: 7.1.2
 Config/testthat/parallel: true
 Config/testthat/edition: 3
 LinkingTo: Rcpp
 URL: https://levisc8.github.io/ipmr/, https://github.com/levisc8/ipmr
 BugReports: https://github.com/levisc8/ipmr/issues
 NeedsCompilation: yes
-Packaged: 2021-09-13 17:26:45 UTC; sl13sise
+Packaged: 2022-04-28 01:08:25 UTC; sl13sise
 Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Aldo Compagnoni [aut],
   Dylan Childs [aut],
   Sanne Evers [aut],
   Roberto Salguero-Gomez [aut],
-  Tiffany Knight [aut]
+  Tiffany Knight [aut],
+  Eric Scott [ctb]
 Maintainer: Sam Levin <levisc8@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-09-14 06:50:06 UTC
+Date/Publication: 2022-04-28 13:40:08 UTC

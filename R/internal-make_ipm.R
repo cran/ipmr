@@ -472,12 +472,13 @@
 #' @noRd
 
 .update_param_output <- function(sub_kernels,
-                                        pop_state,
-                                        data_envs = NA_character_,
-                                        main_env,
-                                        output,
-                                        tot_iterations,
-                                        current_iteration) {
+                                 pop_state,
+                                 data_envs = NA_character_,
+                                 main_env,
+                                 output,
+                                 tot_iterations,
+                                 current_iteration,
+                                 return_sub_kernels) {
 
   # Updates env_seq and data_environments part of output. env, perhaps confusingly,
   # refers to environment in both the programming and the biological sense
@@ -489,7 +490,15 @@
                                current_iteration = current_iteration)
 
 
-  output$sub_kernels <- c(output$sub_kernels, sub_kernels)
+  if(return_sub_kernels){
+    names(sub_kernels) <- paste(names(sub_kernels),
+                                "it",
+                                current_iteration,
+                                sep = "_")
+    output$sub_kernels <- c(output$sub_kernels, sub_kernels)
+  } else {
+    output$sub_kernels <- NA_real_
+  }
 
   output$pop_state   <- pop_state
 
@@ -916,14 +925,15 @@
   }
 
   # Make sure everything in kernel_seq appears is actually an option
+  pos_ids   <- unique(kernel_seq)
 
-  nms_test <- logical(length(unique(kernel_seq)))
+  nms_test  <- logical(length(pos_ids))
 
-  pos_ids  <- proto[proto$uses_par_sets, ]
+  pos_kerns <- proto[proto$uses_par_sets, "kernel_id"]
 
-  for(i in seq_along(unique(kernel_seq))) {
+  for(i in seq_along(pos_ids)) {
 
-    nms_test[i] <- any(grepl(kernel_seq[i], pos_ids))
+    nms_test[i] <- any(grepl(pos_ids[i], pos_kerns))
 
   }
 
@@ -1086,8 +1096,8 @@
   # checks pop_state, env_state, domain definitions
   .check_ipm_definition(proto_ipm, iterate)
 
-  # Experimental function - automatically generates the k_row object.
-  # is meant to take the place of define_k.
+  # automatically generates the k_row object, which contains the iteration
+  # expressions (e.g. n_z_t_1 = P %*% n_z_t + F %*% n_z_t)
 
   k_row <- .init_iteration(proto_ipm, iterate, direction = iter_dir)
 
@@ -1574,7 +1584,7 @@ set_ipmr_classes <- function(to_set, cls = NULL) {
 .eval_general_det <- function(k_row,
                               proto_ipm,
                               sub_kern_list,
-                              pop_state,
+                              # pop_state,
                               main_env) {
 
   pop_list <- list()

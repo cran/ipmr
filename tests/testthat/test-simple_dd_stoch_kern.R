@@ -79,7 +79,8 @@ x <- init_ipm(sim_gen    = "simple",
   make_ipm(
     iterate = TRUE,
     iterations = 50,
-    kernel_seq = sample(1:5, 50, replace = TRUE)
+    kernel_seq = sample(1:5, 50, replace = TRUE),
+    return_sub_kernels = TRUE
   )
 
 
@@ -198,6 +199,13 @@ test_that("asymptotic behavior is preserved at every time step", {
   expect_equal(ipmr_lam, hand_lam, tolerance = 2e-2)
   expect_equal(ipmr_pop_sizes, hand_pop_sizes, tolerance = 1)
 
+})
+
+test_that("log = TRUE works for all type_lambda= 'last' and 'all'", {
+  expect_equal(log(lambda(x, type_lambda = "last")),
+               lambda(x, type_lambda = "last", log = TRUE))
+  expect_equal(log(lambda(x, type_lambda = "all")),
+               lambda(x, type_lambda = "all", log = TRUE))
 })
 
 

@@ -109,8 +109,10 @@ print.proto_ipm <- function(x, ...) {
 
   }
 
+
   # Add more later -----------
 
+  cat("\n\n")
   invisible(x)
 }
 
@@ -1033,7 +1035,8 @@ print.ipmr_vital_rate_funs <- function(x, ...) {
 #' \code{'stochastic'} returns a single value, which by default is
 #' \code{mean(log(lambda(ipm, type_lambda = "all")))}, with the proportion of
 #' \code{burn_in} iterations removed from the beginning of the simulation. Set
-#' \code{log} to \code{FASLE} to get the arithmetic mean for stochastic models.
+#' \code{log} to \code{FALSE} to get \code{lambda} on the linear scale  for
+#' stochastic models (i.e. \code{exp(mean(log(lambdas)))}).
 #' @param ... other arguments passed to methods.
 #' @param burn_in The proportion of iterations to discard. Default is 0.1
 #' (i.e. first 10\% of iterations in the simulation).
@@ -1078,7 +1081,7 @@ lambda.simple_di_det_ipm <- function(ipm,
 lambda.simple_di_stoch_kern_ipm <- function(ipm,
                                             type_lambda = 'stochastic',
                                             burn_in     = 0.1,
-                                            log         = TRUE,
+                                            log         = NULL,
                                             ...) {
 
   .check_lambda_args(ipm, type_lambda)
@@ -1094,16 +1097,25 @@ lambda.simple_di_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
   return(out)
@@ -1116,7 +1128,7 @@ lambda.simple_di_stoch_kern_ipm <- function(ipm,
 lambda.simple_di_stoch_param_ipm <- function(ipm,
                                              type_lambda = 'stochastic',
                                              burn_in     = 0.1,
-                                             log         = TRUE,
+                                             log         = NULL,
                                              ...) {
 
   .check_lambda_args(ipm, type_lambda)
@@ -1132,16 +1144,25 @@ lambda.simple_di_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
   return(out)
@@ -1181,7 +1202,7 @@ lambda.general_di_stoch_kern_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
                                              burn_in     = 0.1,
-                                             log = TRUE) {
+                                             log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1196,16 +1217,25 @@ lambda.general_di_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
 
@@ -1219,7 +1249,7 @@ lambda.general_di_stoch_param_ipm <- function(ipm,
                                               ...,
                                               type_lambda = 'stochastic',
                                               burn_in     = 0.1,
-                                              log = TRUE) {
+                                              log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1234,16 +1264,25 @@ lambda.general_di_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
   return(out)
@@ -1281,7 +1320,7 @@ lambda.simple_dd_stoch_kern_ipm <- function(ipm,
                                             ...,
                                             type_lambda = 'stochastic',
                                             burn_in     = 0.1,
-                                            log = TRUE) {
+                                            log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1296,17 +1335,25 @@ lambda.simple_dd_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
   return(out)
@@ -1320,7 +1367,7 @@ lambda.simple_dd_stoch_param_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
                                              burn_in     = 0.1,
-                                             log = TRUE) {
+                                             log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1335,18 +1382,26 @@ lambda.simple_dd_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
-
   return(out)
 }
 
@@ -1380,7 +1435,7 @@ lambda.general_dd_stoch_kern_ipm <- function(ipm,
                                             ...,
                                             type_lambda = 'stochastic',
                                             burn_in     = 0.1,
-                                            log = TRUE) {
+                                            log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1395,18 +1450,26 @@ lambda.general_dd_stoch_kern_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
-
   return(out)
 
 }
@@ -1418,7 +1481,7 @@ lambda.general_dd_stoch_param_ipm <- function(ipm,
                                              ...,
                                              type_lambda = 'stochastic',
                                              burn_in     = 0.1,
-                                             log = TRUE) {
+                                             log = NULL) {
 
   .check_lambda_args(ipm, type_lambda)
 
@@ -1433,16 +1496,25 @@ lambda.general_dd_stoch_param_ipm <- function(ipm,
     burn_ind <- seq_len(round(length(temp) * burn_in))
   }
 
+  if(is.null(log)) {
+    if(type_lambda == "stochastic") {
+      message("log(lambda) is returned by default for stochastic models. Set ",
+              "'log = FALSE' for lambda on linear scale.")
+    }
+
+    log <- switch(type_lambda,
+                  'all' = FALSE,
+                  'last' = FALSE,
+                  'stochastic' = TRUE)
+  }
+
   out <- switch(type_lambda,
                 'all'        = temp,
                 'last'       = temp,
                 'stochastic' = .thin_stoch_lambda(temp, burn_ind, log))
 
-  if(type_lambda == "stochastic") {
-    if(log) {
-      message("log(lambda) is returned by default for stochastic models. Set ",
-              "'log = FALSE' for lambda on linear scale.")
-    }
+  if(log & type_lambda %in% c("all", "last")) {
+    out <- log(out)
   }
 
   return(out)
@@ -1630,6 +1702,9 @@ plot.simple_di_stoch_param_ipm <- function(x = NULL, y = NULL,
 
 
   plot_list <- ipm$sub_kernels
+  if(all(is.na(plot_list[[1]]))) {
+    stop("Cannot plot sub-kernels unless 'make_ipm(return_sub_kernels = TRUE)'!")
+  }
 
   plt_seq   <- seq_along(plot_list)
 
@@ -1925,7 +2000,8 @@ right_ev.simple_di_det_ipm <- function(ipm,
             final_it + iterations,
             ' iterations. Returning NA, please try again with more iterations.',
             sep = ""
-          )
+          ),
+          call. = FALSE
         )
 
         return(NA_real_)
@@ -1986,7 +2062,8 @@ right_ev.simple_di_det_ipm <- function(ipm,
           iterations,
           ' iterations. Returning NA, please try again with more iterations.',
           sep = ""
-        )
+        ),
+        call. = FALSE
       )
 
       return(NA_real_)
@@ -2038,7 +2115,7 @@ right_ev.simple_di_stoch_kern_ipm <- function(ipm,
   # Normalize just in case. easy for simple IPMs where we know there's only
   # one trait contributing to total population size. Tricker in general IPMs.
 
-  out[[1]] <- out[[1]] / colSums(out[[1]])
+  out[[1]] <- apply(out[[1]], 2, function(x) x / sum(x))
 
   # Replaces the leading n_ with a trailing _v
   names(out) <- substr(names(out), 3, nchar(names(out)))
@@ -2125,7 +2202,8 @@ right_ev.general_di_det_ipm <- function(ipm,
           iterations,
           ' iterations. Returning NA, please try again with more iterations.',
           sep = ""
-        )
+        ),
+        call. = FALSE
       )
 
       return(NA_real_)
@@ -2266,7 +2344,8 @@ left_ev.simple_di_det_ipm <- function(ipm,
         iterations,
         ' iterations. Returning NA, please try again with more iterations.',
         sep = ""
-      )
+      ),
+      call. = FALSE
     )
 
     return(NA_real_)
@@ -2423,7 +2502,8 @@ left_ev.general_di_det_ipm <- function(ipm,
         iterations,
         ' iterations. Returning NA, please try again with more iterations.',
         sep = ""
-      )
+      ),
+      call. = FALSE
     )
 
     return(NA_real_)

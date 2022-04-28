@@ -379,16 +379,23 @@ test_that('.iterate_kerns is acting correctly', {
 
 test_that("burn_in works", {
 
-  burn_lams <- mean(log(iterated_sys$pop_state$lambda[6:50]))
+  burn_lams <- c(lambda = mean(log(iterated_sys$pop_state$lambda[6:50])))
   stoch_lam <- lambda(iterated_sys)
 
   expect_equal(burn_lams, stoch_lam)
 
-  unburn_lams      <- mean(log(iterated_sys$pop_state$lambda))
+  unburn_lams      <- c(lambda = mean(log(iterated_sys$pop_state$lambda)))
   unburn_stoch_lam <- lambda(iterated_sys, burn_in = 0)
 
   expect_equal(unburn_lams, unburn_stoch_lam)
 
+})
+
+test_that("log = TRUE works for all type_lambda= 'last' and 'all'", {
+  expect_equal(log(lambda(monocarp_sys, type_lambda = "last")),
+               lambda(monocarp_sys, type_lambda = "last", log = TRUE))
+  expect_equal(log(lambda(monocarp_sys, type_lambda = "all")),
+               lambda(monocarp_sys, type_lambda = "all", log = TRUE))
 })
 
 test_that('classes are correctly set', {
@@ -416,6 +423,9 @@ test_that("left and right_ev work correctly", {
 
   expect_s3_class(ipmr_w, "ipmr_w")
   expect_equal(hand_w, ipmr_w, ignore_attr = TRUE)
+
+  expect_equal(colSums(ipmr_w[[1]]), rep(1L, dim(ipmr_w[[1]])[2]))
+  expect_equal(colSums(ipmr_v[[1]]), rep(1L, dim(ipmr_v[[1]])[2]))
 
 })
 

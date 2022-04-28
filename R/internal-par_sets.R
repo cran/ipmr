@@ -225,7 +225,9 @@
 .make_par_set_indices <- function(par_sets) {
 
   par_sets <- .flatten_to_depth(par_sets, 1L) %>%
-    .[!names(.) == "levels"]
+    .[names(.) != "levels"]
+
+  par_sets <- par_sets[!duplicated(names(par_sets))]
 
   if(length(par_sets) == 1) {
 
@@ -238,7 +240,7 @@
     if("drop_levels" %in% names(par_sets)) {
 
       to_drop <- par_sets$drop_levels
-      par_sets <- par_sets[-c("drop_levels")]
+      par_sets <- par_sets[!names(par_sets) %in% "drop_levels"]
       drop <- TRUE
 
     } else {

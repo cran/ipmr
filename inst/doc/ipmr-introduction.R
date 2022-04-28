@@ -191,6 +191,10 @@
 #  repro_value <- left_ev(my_ipm)
 #  stable_dist <- right_ev(my_ipm)
 #  
+#  # make_ipm_report works on either proto_ipms or made ipm objects. This
+#  # requires the 'rmarkdown' package to run.
+#  make_ipm_report(my_ipm$proto_ipm, title = "my_ipm_report", render_output = TRUE)
+#  
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  
@@ -867,7 +871,8 @@
 #    ) %>%
 #    make_ipm(usr_funs   = list(inv_logit  = inv_logit),
 #             iterate    = TRUE,
-#             iterations = 10)
+#             iterations = 10,
+#             return_sub_kernels = TRUE)
 #  
 #  # By default, lambda computes stochastic lambda with stochastic models
 #  

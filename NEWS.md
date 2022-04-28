@@ -1,3 +1,39 @@
+# ipmr 0.0.5
+
+Contains a number of bug fixes and some new functionality. The latter are mostly related to PADRINO models, and shouldn't have *too much* of an effect on existing user-specified IPMs.
+
+## Features 
+
+- Adds `return_sub_kernels` argument to `make_ipm()` for `*_stoch_param` and all density dependent methods. This is due to the large RAM footprint that these objects can occupy, particularly for long running models. The default is `FALSE`, which will save considerable memory space. Can be set to `TRUE` for downstream analyses that require sub-kernels/iteration kernels. 
+
+- Prettier printing method for PADRINO objects/lists of user-specified models.
+
+- Prettier warnings for `left/right_ev()` 
+
+- Depending on your view, this may be a bug fix: updates the `log` argument in `lambda()` so that it only changes the scale, NOT the calculation method. The prior behavior was documented, but unlikely to be intuitive, and so caused some confusion. Thanks to @aariq for pointing this out. 
+
+- For stochastic IPMs, `is_conv_to_asymptotic()` and `conv_plot()` now check for convergence in stochastic lambda.  That is, they use a cumulative mean `log(lambda)` over iterations after discarding a burn-in. Thanks to @aariq for implementing this in #45.
+
+- Adds experimental function `make_ipm_report()`. This function converts `proto_ipm` objects into Rmarkdown documents that, when rendered, contain the equations and parameters used to implement the model in Latex. See the function documentation for more details, and report bugs/notation quirks/preferences in the issue tracker.
+
+## Bug fixes 
+
+ - Fixes bug in normalization of left/right eigenvectors in simple density independent stochastic models. (thanks to @aariq)
+ 
+ - Fixes bug where `"drop_levels"` was not recognized in some parameter set indexed models.
+ 
+ - Fixes bug where parameter set levels were recycled in some cases. 
+ 
+ - Fixes bug in `lambda()` where `log = TRUE` had no effect when the IPM was stochastic and `type_lambda` was `'last'` or `'all'`.
+ 
+ - Switched from `all.equal` to absolute tolerance. @aariq in #52.
+ 
+ - Fixes bug where the value of `lambda()` was named for determinstic models and unnamed for stochastic models.  @aariq in #57.
+ 
+ - Fixes bug in `make_ipm()` where a user-specified sequence wasn't getting used correctly for certain model classes. @aariq in #58. 
+ 
+ - Warnings about `NA`s in `data_list` are no longer raised for model objects. 
+
 # ipmr 0.0.4
 
 Contains small tweaks, bug fixes, and new feature additions. There shouldn't be any breaking changes to the API. 

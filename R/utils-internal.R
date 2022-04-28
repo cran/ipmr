@@ -95,10 +95,17 @@
   if(inherits(obj, supported_models)) {
 
     attr(obj, "flat_protect") <- TRUE
+    attr(obj, "na_ok")        <- TRUE
 
   } else {
 
     attr(obj, "flat_protect") <- FALSE
+
+    if(is.na(obj)) {
+      attr(obj, "na_ok") <- FALSE
+    } else {
+      attr(obj, "na_ok") <- TRUE
+    }
 
   }
 
@@ -531,8 +538,10 @@ f_env <- rlang::child_env(
 
   # Other math functions
   sqrt = .unary_op("sqrt(", ")"),
-  sin =  .unary_op("sin(", ")"),
-  log =  .unary_op("log(", ")"),
-  abs =  .unary_op("abs(", ")")
+  sin  = .unary_op("sin(", ")"),
+  cos  = .unary_op("cos(", ")"),
+  tan  = .unary_op("tan(", ")"),
+  log  = .unary_op("log(", ")"),
+  abs  = .unary_op("abs(", ")")
 )
 

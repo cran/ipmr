@@ -14,7 +14,19 @@
 
 <title>Density Dependent IPMs</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -125,7 +137,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -144,39 +336,76 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li><a href="#density-dependent-models">Density dependent models</a>
 <ul>
-<li><a href="#example-of-a-simple-stochastic-kernel-resampled-model-with-density-dependence">Example of a simple, stochastic, kernel-resampled model with density dependence</a></li>
+<li><a href="#example-of-a-simple-stochastic-kernel-resampled-model-with-density-dependence">Example
+of a simple, stochastic, kernel-resampled model with density
+dependence</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="density-dependent-models" class="section level1">
 <h1>Density dependent models</h1>
-<p>Density dependent model classes are now implemented. This vignette will get more details shortly. For now, see the example below:</p>
+<p>Density dependent model classes are now implemented. This vignette
+will get more details shortly. For now, see the example below:</p>
 <div id="example-of-a-simple-stochastic-kernel-resampled-model-with-density-dependence" class="section level2">
-<h2>Example of a simple, stochastic, kernel-resampled model with density dependence</h2>
-<p>This example assumes that density dependence is modeled as a fixed effect in survival and recruit production models, and assumes there is no density dependence in growth or probability of reproducing models. The survival (<span class="math inline">\(s(z, N)\)</span>/<code>s_yr</code>), growth (<span class="math inline">\(G_{yr}(z&#39;,z)\)</span>/ <code>g_yr</code>), and number of recruit models (<span class="math inline">\(r_{s,yr}(z, N)\)</span>/<code>r_s_yr</code>) have year-specific intercepts as well.</p>
+<h2>Example of a simple, stochastic, kernel-resampled model with density
+dependence</h2>
+<p>This example assumes that density dependence is modeled as a fixed
+effect in survival and recruit production models, and assumes there is
+no density dependence in growth or probability of reproducing models.
+The survival (<span class="math inline">\(s(z,
+N)\)</span>/<code>s_yr</code>), growth (<span class="math inline">\(G_{yr}(z&#39;,z)\)</span>/ <code>g_yr</code>), and
+number of recruit models (<span class="math inline">\(r_{s,yr}(z,
+N)\)</span>/<code>r_s_yr</code>) have year-specific intercepts as
+well.</p>
 <p>The mathematical form for the IPM is below:</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t+1) = K_{yr}(z&#39;, z, N)n(z, t)dz\)</span></p></li>
-<li><p><span class="math inline">\(N = \int_L^Un(z,t)dz\)</span></p></li>
-<li><p><span class="math inline">\(K_{yr}(z&#39;, z, N) = P_{yr}(z&#39;, z, N) + F_{yr}(z&#39;, z, N)\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t+1) = K_{yr}(z&#39;, z,
+N)n(z, t)dz\)</span></p></li>
+<li><p><span class="math inline">\(N =
+\int_L^Un(z,t)dz\)</span></p></li>
+<li><p><span class="math inline">\(K_{yr}(z&#39;, z, N) = P_{yr}(z&#39;,
+z, N) + F_{yr}(z&#39;, z, N)\)</span></p></li>
 </ol>
-<p>Here, <span class="math inline">\(N\)</span> represents the total population size. The kernel values fluctuate as a function of <span class="math inline">\(N\)</span> at each iteration of the model.</p>
-<p>The <span class="math inline">\(P_{yr}(z&#39;, z, N)\)</span> kernel is comprised of a density independent function for growth (Eq 6-7) and a density dependent function for survival (Eq 5). <span class="math inline">\(f_G\)</span> denotes a Gaussian probability density function:</p>
+<p>Here, <span class="math inline">\(N\)</span> represents the total
+population size. The kernel values fluctuate as a function of <span class="math inline">\(N\)</span> at each iteration of the model.</p>
+<p>The <span class="math inline">\(P_{yr}(z&#39;, z, N)\)</span> kernel
+is comprised of a density independent function for growth (Eq 6-7) and a
+density dependent function for survival (Eq 5). <span class="math inline">\(f_G\)</span> denotes a Gaussian probability
+density function:</p>
 <ol start="4" style="list-style-type: decimal">
-<li><p><span class="math inline">\(P(z&#39;, z, N) = s(z, N) * G(z&#39;, z)\)</span></p></li>
-<li><p><span class="math inline">\(Logit(s(z, N)) = \alpha_s + \alpha_{s,yr} + \beta_s^z * z + \beta_s^{N} * N\)</span></p></li>
-<li><p><span class="math inline">\(G(z&#39;, z, \theta) = f_G(z&#39;, \mu_{G,yr}(z), \sigma_G)\)</span></p></li>
-<li><p><span class="math inline">\(\mu_{G,yr}(z) = \alpha_G + \alpha_{G,yr} + \beta_G^z * z\)</span></p></li>
+<li><p><span class="math inline">\(P(z&#39;, z, N) = s(z, N) * G(z&#39;,
+z)\)</span></p></li>
+<li><p><span class="math inline">\(Logit(s(z, N)) = \alpha_s +
+\alpha_{s,yr} + \beta_s^z * z + \beta_s^{N} * N\)</span></p></li>
+<li><p><span class="math inline">\(G(z&#39;, z, \theta) = f_G(z&#39;,
+\mu_{G,yr}(z), \sigma_G)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_{G,yr}(z) = \alpha_G +
+\alpha_{G,yr} + \beta_G^z * z\)</span></p></li>
 </ol>
-<p>The <span class="math inline">\(F_{yr}(z&#39;,z, N)\)</span> kernel is comprised of a density independent function for recruit size (Eq 10) and probability of reproducing (Eq 9), and a density dependent function for number of recruits produced by parents (Eq 11). <span class="math inline">\(f_{r_d}\)</span> denotes a Gaussian probability density function:</p>
+<p>The <span class="math inline">\(F_{yr}(z&#39;,z, N)\)</span> kernel
+is comprised of a density independent function for recruit size (Eq 10)
+and probability of reproducing (Eq 9), and a density dependent function
+for number of recruits produced by parents (Eq 11). <span class="math inline">\(f_{r_d}\)</span> denotes a Gaussian probability
+density function:</p>
 <ol start="8" style="list-style-type: decimal">
-<li><p><span class="math inline">\(F_{yr}(z&#39;, z, N) = r_r(z) * r_{s,yr}(z, N) + r_d(z&#39;)\)</span></p></li>
-<li><p><span class="math inline">\(Logit(r_r(z)) = \alpha_{r_r} + \beta_{r_r}^z * z\)</span></p></li>
-<li><p><span class="math inline">\(r_d(z&#39;) = f_{r_d}(z&#39;, \mu_{r_d}, \sigma_{r_d})\)</span></p></li>
-<li><p><span class="math inline">\(Log(r_{s,yr}(z, N)) = \alpha_{r_s} + \alpha_{{r_s},yr} + \beta_{r_s}^z * z + \beta_{r_s}^N * N\)</span></p></li>
+<li><p><span class="math inline">\(F_{yr}(z&#39;, z, N) = r_r(z) *
+r_{s,yr}(z, N) + r_d(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(Logit(r_r(z)) = \alpha_{r_r} +
+\beta_{r_r}^z * z\)</span></p></li>
+<li><p><span class="math inline">\(r_d(z&#39;) = f_{r_d}(z&#39;,
+\mu_{r_d}, \sigma_{r_d})\)</span></p></li>
+<li><p><span class="math inline">\(Log(r_{s,yr}(z, N)) = \alpha_{r_s} +
+\alpha_{{r_s},yr} + \beta_{r_s}^z * z + \beta_{r_s}^N *
+N\)</span></p></li>
 </ol>
-<p>We’ll simulate a 50 year time series using hypothetical parameter values. The fixed parameter values are created as with a density independent model. The difference is that we now have two more parameters: <code>s_dd</code>, and <code>r_s_dd</code>. These are the coefficients that correspond to <span class="math inline">\(\beta_s^N\)</span> and <span class="math inline">\(\beta_{r_s}^N\)</span>, respectively. The chunk below initializes the data list object, which we name <code>params</code>.</p>
+<p>We’ll simulate a 50 year time series using hypothetical parameter
+values. The fixed parameter values are created as with a density
+independent model. The difference is that we now have two more
+parameters: <code>s_dd</code>, and <code>r_s_dd</code>. These are the
+coefficients that correspond to <span class="math inline">\(\beta_s^N\)</span> and <span class="math inline">\(\beta_{r_s}^N\)</span>, respectively. The chunk
+below initializes the data list object, which we name
+<code>params</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipmr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data_list <span class="ot">=</span> <span class="fu">list</span>(</span>
@@ -208,13 +437,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(r_s_r_int) <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;r_s_&quot;</span>, nms, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>params     <span class="ot">&lt;-</span> <span class="fu">c</span>(data_list, g_r_int, s_r_int, r_s_r_int)</span></code></pre></div>
-<p>Next, we initialize the model using <code>init_ipm</code>. The difference is that the second argument is now changed to <code>&quot;dd&quot;</code> to denote that this is a density dependent model.</p>
+<p>Next, we initialize the model using <code>init_ipm</code>. The
+difference is that the second argument is now changed to
+<code>&quot;dd&quot;</code> to denote that this is a density dependent model.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dd_ipm <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen =</span> <span class="st">&quot;simple&quot;</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">di_dd =</span> <span class="st">&quot;dd&quot;</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">det_stoch =</span> <span class="st">&quot;stoch&quot;</span>, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">kern_param =</span> <span class="st">&quot;kern&quot;</span>)</span></code></pre></div>
-<p>Once we’ve done that, we’re ready to begin specifying the kernel forms. One previously not mentioned aspect of <code>define_pop_state()</code> is that, in addition to defining initial conditions, 2 additional helper variables are generated: <code>n_stateVariable_t</code> and <code>n_stateVariable_t_1</code>. These can be used to reference the population states in vital rate and/or kernel expressions.</p>
-<p>These will look very similar to the ones we specified for density-independent models, except that we now include the term <code>s_dd * sum(n_size_t)</code> in the survival expression. <code>sum(n_size_t)</code> is the syntax <code>ipmr</code> uses to denote total population size. Further down, there is an example of how to use subsets of the trait distribution.</p>
+<p>Once we’ve done that, we’re ready to begin specifying the kernel
+forms. One previously not mentioned aspect of
+<code>define_pop_state()</code> is that, in addition to defining initial
+conditions, 2 additional helper variables are generated:
+<code>n_stateVariable_t</code> and <code>n_stateVariable_t_1</code>.
+These can be used to reference the population states in vital rate
+and/or kernel expressions.</p>
+<p>These will look very similar to the ones we specified for
+density-independent models, except that we now include the term
+<code>s_dd * sum(n_size_t)</code> in the survival expression.
+<code>sum(n_size_t)</code> is the syntax <code>ipmr</code> uses to
+denote total population size. Further down, there is an example of how
+to use subsets of the trait distribution.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dd_ipm <span class="ot">&lt;-</span> <span class="fu">define_kernel</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">proto_ipm        =</span> dd_ipm,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name             =</span> <span class="st">&quot;P_yr&quot;</span>,</span>
@@ -230,7 +472,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">evict_cor        =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">evict_fun        =</span> <span class="fu">truncated_distributions</span>(<span class="st">&quot;norm&quot;</span>, <span class="st">&quot;g_yr&quot;</span>)</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>) </span></code></pre></div>
-<p>Other than the inclusion of the density dependent term in the survival expression, this should look quite similar to the density-independent kernel-resampled models from the Introduction vignette. We are now ready to continue defining the <span class="math inline">\(F_{yr}(z&#39;,z,N)\)</span> kernel.</p>
+<p>Other than the inclusion of the density dependent term in the
+survival expression, this should look quite similar to the
+density-independent kernel-resampled models from the Introduction
+vignette. We are now ready to continue defining the <span class="math inline">\(F_{yr}(z&#39;,z,N)\)</span> kernel.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dd_ipm <span class="ot">&lt;-</span> <span class="fu">define_kernel</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">proto_ipm        =</span> dd_ipm,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name             =</span> <span class="st">&quot;F_yr&quot;</span>,</span>
@@ -246,7 +491,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">evict_cor        =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">evict_fun        =</span> <span class="fu">truncated_distributions</span>(<span class="st">&quot;norm&quot;</span>, <span class="st">&quot;r_d&quot;</span>)</span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
-<p>Again, we’ve add the <code>f_s_dd * sum(n_size_t)</code> to the expression for <code>f_s_yr</code>, but otherwise, not much is different from how we’ve defined density independent models. The rest of the model definition process is unchanged.</p>
+<p>Again, we’ve add the <code>f_s_dd * sum(n_size_t)</code> to the
+expression for <code>f_s_yr</code>, but otherwise, not much is different
+from how we’ve defined density independent models. The rest of the model
+definition process is unchanged.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a> dd_ipm <span class="ot">&lt;-</span>  dd_ipm <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_impl</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_impl_args_list</span>(</span>
@@ -267,7 +515,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">iterations =</span> <span class="dv">50</span>,</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">kernel_seq =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p><code>lambda</code> methods are defined for all density-dependent models as well. It is fairly straightforward to plot population sizes for these models by extracting the column sums of the arrays in <code>pop_state</code>.</p>
+<p><code>lambda</code> methods are defined for all density-dependent
+models as well. It is fairly straightforward to plot population sizes
+for these models by extracting the column sums of the arrays in
+<code>pop_state</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>time_step_lams <span class="ot">&lt;-</span> <span class="fu">lambda</span>(dd_ipm, <span class="at">type_lambda =</span> <span class="st">&quot;all&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>stoch_lam      <span class="ot">&lt;-</span> <span class="fu">lambda</span>(dd_ipm, <span class="at">type_lambda =</span> <span class="st">&quot;stochastic&quot;</span>, <span class="at">burn_in =</span> <span class="fl">0.15</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>

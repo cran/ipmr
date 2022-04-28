@@ -69,7 +69,7 @@
 #    ) %>%
 #    define_kernel(
 #      name          = "go_discrete",
-#      formula       = r_r * r_s * g_i * d_ht,
+#      formula       = r_r * r_s * d_ht,
 #  
 #      # Note that now, family = "CD" because it denotes a continuous -> discrete transition
 #  
@@ -92,7 +92,7 @@
 #  
 #      formula = 0,
 #  
-#      # Note that now, family = "DD" becuase it denotes a discrete -> discrete transition
+#      # Note that now, family = "DD" because it denotes a discrete -> discrete transition
 #  
 #      family  = "DD",
 #  
@@ -108,11 +108,7 @@
 #      # transition
 #  
 #      name          = 'leave_discrete',
-#  
-#      # We append d_ht here as well, because we need to integrate over the
-#      # the recruit size distribution.
-#  
-#      formula       = e_p * r_d * d_ht,
+#      formula       = e_p * g_i * r_d,
 #      r_d           = dnorm(ht_2, r_d_mu, r_d_sd),
 #      family        = 'DC',
 #      data_list     = data_list,
@@ -408,7 +404,7 @@
 #      # This kernel also doesn't get a index, because there are no varying parameters.
 #  
 #      name          = 'leave_discrete',
-#      formula       = e_p * r_d * d_ht,
+#      formula       = e_p * r_d,
 #      r_d           = dnorm(ht_2, r_d_mu, r_d_sd),
 #      family        = 'DC',
 #      data_list     = all_params,
@@ -611,7 +607,7 @@
 #    define_kernel(
 #      name          = "leave_discrete",
 #      family        = "DC",
-#      formula       = r_d * r_s * c_d * d_surf_area,
+#      formula       = r_d * r_s * c_d,
 #      c_d           = dnorm(surf_area_2, c_d_mu, c_d_sd),
 #      data_list     = constant_params,
 #      states        = list(c("surf_area", "sb")),
@@ -679,7 +675,8 @@
 #    make_ipm(usr_funs = list(inv_logit  = inv_logit,
 #                             sample_env = sample_env),
 #             iterate = TRUE,
-#             iterations = 100)
+#             iterations = 100,
+#             return_sub_kernels = TRUE)
 #  
 #  
 
@@ -772,7 +769,7 @@
 #    ) %>%
 #    define_kernel(
 #      name          = 'leave_discrete',
-#      formula       = e_p * r_d * d_ht,
+#      formula       = e_p * r_d,
 #      r_d           = dnorm(ht_2, r_d_mu, r_d_sd),
 #      family        = 'DC',
 #      data_list     = data_list,

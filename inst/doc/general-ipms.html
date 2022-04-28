@@ -14,7 +14,19 @@
 
 <title>General IPMs</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -125,7 +137,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -142,97 +334,180 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="TOC">
 <ul>
-<li><a href="#simple-ipms-vs-general-ipms">Simple IPMs vs General IPMs</a></li>
-<li><a href="#a-general-density-independent-deterministic-ipm">A general, density independent, deterministic IPM</a>
+<li><a href="#simple-ipms-vs-general-ipms">Simple IPMs vs General
+IPMs</a></li>
+<li><a href="#a-general-density-independent-deterministic-ipm">A
+general, density independent, deterministic IPM</a>
 <ul>
-<li><a href="#key-differences-between-simple-and-general-ipms.">Key differences between simple and general IPMs.</a></li>
-<li><a href="#mathematical-overview-of-the-example">Mathematical overview of the example</a></li>
+<li><a href="#key-differences-between-simple-and-general-ipms.">Key
+differences between simple and general IPMs.</a></li>
+<li><a href="#mathematical-overview-of-the-example">Mathematical
+overview of the example</a></li>
 <li><a href="#model-code">Model code</a></li>
 <li><a href="#further-analysis">Further analysis</a></li>
 </ul></li>
-<li><a href="#general-models-for-discretely-varying-environments">General models for discretely varying environments</a>
+<li><a href="#general-models-for-discretely-varying-environments">General
+models for discretely varying environments</a>
 <ul>
-<li><a href="#mathematical-overview-of-the-example-1">Mathematical overview of the example</a></li>
+<li><a href="#mathematical-overview-of-the-example-1">Mathematical
+overview of the example</a></li>
 <li><a href="#model-parameterization">Model parameterization</a></li>
 </ul></li>
-<li><a href="#general-models-with-continuously-varying-environments">General models with continuously varying environments</a>
+<li><a href="#general-models-with-continuously-varying-environments">General
+models with continuously varying environments</a>
 <ul>
 <li><a href="#mathematical-overview">Mathematical overview</a></li>
 <li><a href="#model-parameterization-1">Model parameterization</a></li>
 <li><a href="#model-specification">Model specification</a></li>
+<li><a href="#a-note-on-memory-management">A note on memory
+management</a></li>
 </ul></li>
-<li><a href="#code-to-construct-mega-kernels">Code to construct mega-kernels</a></li>
+<li><a href="#code-to-construct-mega-kernels">Code to construct
+mega-kernels</a></li>
 </ul>
 </div>
 
 <div id="simple-ipms-vs-general-ipms" class="section level2">
 <h2>Simple IPMs vs General IPMs</h2>
-<p>In the <a href="https://levisc8.github.io/ipmr/articles/ipmr-introduction.html">introduction vignette</a>, we reviewed some basic IPM theory and worked through examples of simple IPMs, which only model a single, continuously distributed state variable. General IPMs are distinguished from simple ones in that they incorporate multiple state variables and/or include transitions between continuous and discrete states. These state variables could be, for example, a continuous measure of coral colony surface area and a discrete state to denote aspergillosis infection (in <a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/09-1178.1">Bruno et al. 2011</a>), a mixture of trees classified by basal diameter and a discrete state for seeds in a seed bank (in <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2664.13020">Crandall &amp; Knight 2017</a>), or a mixture of multiple continuous and discrete state (e.g. <a href="https://esajournals.onlinelibrary.wiley.com/doi/pdf/10.1890/13-1478.1">Aikens &amp; Roach 2014</a>). A more comprehensive definition is provided in <a href="https://pubmed.ncbi.nlm.nih.gov/16673349/">Ellner &amp; Rees (2006)</a> and in Ellner, Childs &amp; Rees, Chapter 6 (2016).</p>
+<p>In the <a href="https://levisc8.github.io/ipmr/articles/ipmr-introduction.html">introduction
+vignette</a>, we reviewed some basic IPM theory and worked through
+examples of simple IPMs, which only model a single, continuously
+distributed state variable. General IPMs are distinguished from simple
+ones in that they incorporate multiple state variables and/or include
+transitions between continuous and discrete states. These state
+variables could be, for example, a continuous measure of coral colony
+surface area and a discrete state to denote aspergillosis infection (in
+<a href="https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/09-1178.1">Bruno
+et al. 2011</a>), a mixture of trees classified by basal diameter and a
+discrete state for seeds in a seed bank (in <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2664.13020">Crandall
+&amp; Knight 2017</a>), or a mixture of multiple continuous and discrete
+state (e.g. <a href="https://esajournals.onlinelibrary.wiley.com/doi/pdf/10.1890/13-1478.1">Aikens
+&amp; Roach 2014</a>). A more comprehensive definition is provided in <a href="https://pubmed.ncbi.nlm.nih.gov/16673349/">Ellner &amp; Rees
+(2006)</a> and in Ellner, Childs &amp; Rees, Chapter 6 (2016).</p>
 </div>
 <div id="a-general-density-independent-deterministic-ipm" class="section level2">
 <h2>A general, density independent, deterministic IPM</h2>
-<p>We’ll start with the least complicated of the general IPMs and build progressively from there. If you’ve already read through the introduction vignette, then most of this will look pretty familiar. If not, it is probably best to at least skim the first few sections before proceeding here.</p>
+<p>We’ll start with the least complicated of the general IPMs and build
+progressively from there. If you’ve already read through the
+introduction vignette, then most of this will look pretty familiar. If
+not, it is probably best to at least skim the first few sections before
+proceeding here.</p>
 <div id="key-differences-between-simple-and-general-ipms." class="section level3">
 <h3>Key differences between simple and general IPMs.</h3>
-<p>As noted above, we are now working with models that may have multiple continuous state variables and/or discrete states to describe the demography of our species. Thus, we need to add some more information to the model’s definition in order to fully capture these additional demographic details.</p>
-<p>Relative to how we define simple models in <code>ipmr</code>, there are now two new bits:</p>
+<p>As noted above, we are now working with models that may have multiple
+continuous state variables and/or discrete states to describe the
+demography of our species. Thus, we need to add some more information to
+the model’s definition in order to fully capture these additional
+demographic details.</p>
+<p>Relative to how we define simple models in <code>ipmr</code>, there
+are now two new bits:</p>
 <ol style="list-style-type: decimal">
-<li><p>Each kernel that has an integration requires that <code>d_statevariable</code> get appended to the kernel <code>formula</code>. This is equivalent to the “dz” in <span class="math inline">\(\int_L^U K(z&#39;,z) n(z,t) \mathrm{dz}\)</span>. <code>ipmr</code> automatically generates this variable internally, so there is no need to define it in the <code>data_list</code> or <code>define_domains()</code>, we can just add it any of the formula(s) that we want to. We skipped this step in the simple IPMs because it gets appended automatically. Unfortunately, it is less easy to infer the correct state variable to <code>d_z</code> with for general IPMs where there may be many continuous and/or discrete states.</p></li>
-<li><p>The implementation arguments list can now have different values in the <code>state_start</code> and <code>state_end</code> slots. This is demonstrated in a separate chunk below.</p></li>
+<li><p>Each kernel that has an integration requires that
+<code>d_statevariable</code> get appended to the kernel
+<code>formula</code>. This is equivalent to the “dz” in <span class="math inline">\(\int_L^U K(z&#39;,z) n(z,t) \mathrm{dz}\)</span>.
+<code>ipmr</code> automatically generates this variable internally, so
+there is no need to define it in the <code>data_list</code> or
+<code>define_domains()</code>, we can just add it any of the formula(s)
+that we want to. We skipped this step in the simple IPMs because it gets
+appended automatically. Unfortunately, it is less easy to infer the
+correct state variable to <code>d_z</code> with for general IPMs where
+there may be many continuous and/or discrete states.</p></li>
+<li><p>The implementation arguments list can now have different values
+in the <code>state_start</code> and <code>state_end</code> slots. This
+is demonstrated in a separate chunk below.</p></li>
 </ol>
 </div>
 <div id="mathematical-overview-of-the-example" class="section level3">
 <h3>Mathematical overview of the example</h3>
-<p>This example will use an IPM for <em>Ligustrum obtusifolium</em>, a tree species that is now invasive in North America. Data were collected outside of St. Louis, Missouri, and the full model is described in <a href="https://esajournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fecy.2681&amp;file=ecy2681-sup-0002-MetadataS1.pdf">Levin et al. 2019</a>. The IPM consists of a single discrete stage (seed bank, abbreviated <code>b</code>) and a single continuous state (height, abbreviated <code>ht</code>/<span class="math inline">\(z,z&#39;\)</span>). The census timing was such that all seeds must enter the seed bank. They can either germinate in the next year, or they can die (so <code>stay_discrete</code> = 0). Thus, the full model takes the following form:</p>
+<p>This example will use an IPM for <em>Ligustrum obtusifolium</em>, a
+tree species that is now invasive in North America. Data were collected
+outside of St. Louis, Missouri, and the full model is described in <a href="https://esajournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fecy.2681&amp;file=ecy2681-sup-0002-MetadataS1.pdf">Levin
+et al. 2019</a>. The IPM consists of a single discrete stage (seed bank,
+abbreviated <code>b</code>) and a single continuous state (height,
+abbreviated <code>ht</code>/<span class="math inline">\(z,z&#39;\)</span>). The census timing was such
+that all seeds must enter the seed bank. They can either germinate in
+the next year, or they can die (so <code>stay_discrete</code> = 0).
+Thus, the full model takes the following form:</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P(z&#39;, z) n(z,t)d\mathrm{z} + b(t) * \int_L^U leave\_discrete(z&#39;) \mathrm{dz&#39;}\)</span></p></li>
-<li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete(z) n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
-<li><p><span class="math inline">\(P(z&#39;,z) = s(z) * G(z&#39;,z)\)</span></p></li>
-<li><p><span class="math inline">\(go\_discrete(z) = f_s(z) * f_r(z) * g_i\)</span></p></li>
-<li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p * f_d(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P(z&#39;,
+z) n(z,t)d\mathrm{z} + b(t) * leave\_discrete(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete(z)
+n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
+<li><p><span class="math inline">\(P(z&#39;,z) = s(z) *
+G(z&#39;,z)\)</span></p></li>
+<li><p><span class="math inline">\(go\_discrete(z) = f_s(z) * f_r(z) *
+g_i\)</span></p></li>
+<li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p *
+f_d(z&#39;)\)</span></p></li>
 <li><p><span class="math inline">\(stay\_discrete = 0\)</span></p></li>
 </ol>
-<p><span class="math inline">\(f_G\)</span> and <span class="math inline">\(f_{r_d}\)</span> denote Normal probability density functions. The vital rates functions and example code to fit them are:</p>
+<p><span class="math inline">\(f_G\)</span> and <span class="math inline">\(f_{r_d}\)</span> denote Normal probability density
+functions. The vital rates functions and example code to fit them
+are:</p>
 <ol style="list-style-type: decimal">
-<li><p>survival (<code>s</code>): A logistic regression with a squared term</p>
+<li><p>survival (<code>s</code>): A logistic regression with a squared
+term</p>
 <ul>
-<li><p>Example code: <code>glm(surv ~ ht_1 + I(ht_1)^2, data = my_surv_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(s(z)) = \alpha_s + \beta_{s,1} * z + \beta_{s,2} * z^2\)</span></p></li>
+<li><p>Example code:
+<code>glm(surv ~ ht_1 + I(ht_1)^2, data = my_surv_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(s(z)) =
+\alpha_s + \beta_{s,1} * z + \beta_{s,2} * z^2\)</span></p></li>
 </ul></li>
 <li><p>growth (<code>g</code>): A linear regression</p>
 <ul>
-<li><p>example code: <code>lm(ht_2 ~ ht_1, data = grow_data)</code></p></li>
+<li><p>example code:
+<code>lm(ht_2 ~ ht_1, data = grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(\mu_G = \alpha_G + \beta_G * z\)</span></p></li>
-<li><p><span class="math inline">\(G(z&#39;,z) = f_G(\mu_G, \sigma_G)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_G = \alpha_G + \beta_G *
+z\)</span></p></li>
+<li><p><span class="math inline">\(G(z&#39;,z) = f_G(\mu_G,
+\sigma_G)\)</span></p></li>
 </ul></li>
 </ul></li>
-<li><p>flowering probability (<code>r_r</code>): A logistic regression</p>
+<li><p>flowering probability (<code>r_r</code>): A logistic
+regression</p>
 <ul>
-<li><p>example code: <code>glm(repro ~ ht_1, data = my_repro_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(r_r(z)) = \alpha_{r_r} + \beta_{r_r} * z\)</span></p></li>
+<li><p>example code:
+<code>glm(repro ~ ht_1, data = my_repro_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(r_r(z)) =
+\alpha_{r_r} + \beta_{r_r} * z\)</span></p></li>
 </ul></li>
 <li><p>seed production (<code>r_s</code>): A Poisson regression</p>
 <ul>
-<li><p>example code: <code>glm(seeds ~ ht_1, data = my_seed_data, family = poisson())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Log(r_s(z)) = \alpha_{r_s} + \beta_{r_s} * z\)</span></p></li>
+<li><p>example code:
+<code>glm(seeds ~ ht_1, data = my_seed_data, family = poisson())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Log(r_s(z)) =
+\alpha_{r_s} + \beta_{r_s} * z\)</span></p></li>
 </ul></li>
-<li><p>Recruit size distribution (<code>r_d</code>): A normal distribution with mean <code>r_d_mu</code> and standard deviation <code>r_d_sd</code>.</p>
+<li><p>Recruit size distribution (<code>r_d</code>): A normal
+distribution with mean <code>r_d_mu</code> and standard deviation
+<code>r_d_sd</code>.</p>
 <ul>
-<li><p>example code: <code>r_d_mu &lt;- mean(my_recr_data$ht_2, na.rm = TRUE)</code> and <code>r_d_sd &lt;- sd(my_rer_data$ht_2, na.rm = TRUE)</code>.</p></li>
-<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) = f_{r_d}(\mu_{r_d}, \sigma_{r_d})\)</span></p></li>
+<li><p>example code:
+<code>r_d_mu &lt;- mean(my_recr_data$ht_2, na.rm = TRUE)</code> and
+<code>r_d_sd &lt;- sd(my_rer_data$ht_2, na.rm = TRUE)</code>.</p></li>
+<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) =
+f_{r_d}(\mu_{r_d}, \sigma_{r_d})\)</span></p></li>
 </ul></li>
-<li><p>germination (<code>g_i</code>) and establishment (<code>e_p</code>) are constants. The code below assumes we have our data in long format (each seed get its own row) and that successful germination/establishment is coded as 1s, failures are 0s, and seeds we don’t know the fate of for whatever reason are <code>NA</code>s.</p>
+<li><p>germination (<code>g_i</code>) and establishment
+(<code>e_p</code>) are constants. The code below assumes we have our
+data in long format (each seed get its own row) and that successful
+germination/establishment is coded as 1s, failures are 0s, and seeds we
+don’t know the fate of for whatever reason are <code>NA</code>s.</p>
 <ul>
-<li><p>example code: <code>g_i &lt;- mean(my_germ_data, na.rm = TRUE)</code> and <code>e_p &lt;- mean(my_est_data, na.rm = TRUE)</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(g_i = 0.5067, e_p = 0.15\)</span></p></li>
+<li><p>example code:
+<code>g_i &lt;- mean(my_germ_data, na.rm = TRUE)</code> and
+<code>e_p &lt;- mean(my_est_data, na.rm = TRUE)</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(g_i = 0.5067, e_p
+= 0.15\)</span></p></li>
 </ul></li>
 </ol>
 </div>
 <div id="model-code" class="section level3">
 <h3>Model code</h3>
-<p>Below is the code to implement this model. First, we define our our parameters in a list.</p>
+<p>Below is the code to implement this model. First, we define our our
+parameters in a list.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipmr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the initial population conditions and parameters</span></span>
@@ -253,7 +528,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">e_p       =</span> <span class="fl">0.15</span>,</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">g_i       =</span> <span class="fl">0.5067</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>Next, we set up two functions to pass into the model. These perform the inverse logit transformations for the probability of flowering model (<code>r_r</code>/<span class="math inline">\(r_r(z)\)</span>) and survival model (<code>s</code>/<span class="math inline">\(s(z)\)</span>).</p>
+<p>Next, we set up two functions to pass into the model. These perform
+the inverse logit transformations for the probability of flowering model
+(<code>r_r</code>/<span class="math inline">\(r_r(z)\)</span>) and
+survival model (<code>s</code>/<span class="math inline">\(s(z)\)</span>).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We&#39;ll set up some helper functions. The survival function</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># in this model is a quadratic function, so we use an additional inverse logit function</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># that can handle the quadratic term.</span></span>
@@ -265,7 +543,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>inv_logit_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(int, slope, slope_2, sv) {</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(int <span class="sc">+</span> slope <span class="sc">*</span> sv <span class="sc">+</span> slope_2 <span class="sc">*</span> sv <span class="sc">^</span> <span class="dv">2</span>)))</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Now, we’re ready to begin making the IPM kernels. We change the <code>sim_gen</code> argument of <code>init_ipm()</code> to <code>&quot;general&quot;</code>.</p>
+<p>Now, we’re ready to begin making the IPM kernels. We change the
+<code>sim_gen</code> argument of <code>init_ipm()</code> to
+<code>&quot;general&quot;</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>general_ipm <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen =</span> <span class="st">&quot;general&quot;</span>, <span class="at">di_dd =</span> <span class="st">&quot;di&quot;</span>, <span class="at">det_stoch =</span> <span class="st">&quot;det&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&quot;P&quot;</span>,</span>
@@ -296,7 +576,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&quot;go_discrete&quot;</span>,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> r_r <span class="sc">*</span> r_s <span class="sc">*</span> g_i <span class="sc">*</span> d_ht,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> r_r <span class="sc">*</span> r_s <span class="sc">*</span> d_ht,</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note that now, family = &quot;CD&quot; because it denotes a continuous -&gt; discrete transition</span></span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -319,7 +599,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="dv">0</span>,</span>
 <span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note that now, family = &quot;DD&quot; becuase it denotes a discrete -&gt; discrete transition</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note that now, family = &quot;DD&quot; because it denotes a discrete -&gt; discrete transition</span></span>
 <span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">family  =</span> <span class="st">&quot;DD&quot;</span>,</span>
 <span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -335,24 +615,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># transition</span></span>
 <span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&#39;leave_discrete&#39;</span>,</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We append d_ht here as well, because we need to integrate over the </span></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the recruit size distribution.</span></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d <span class="sc">*</span> d_ht,</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Again, we need to add &quot;b&quot; to the states list</span></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
-<p>We’ve now defined all of the kernels, next are the implementation details. These also differ somewhat from simple IPMs. The key difference in the implementation arguments list lies in the <code>state_start</code> and <code>state_end</code> of each kernel, and is related to the <code>family</code> argument of each kernel. Kernels that begin with one state and end in a different state (e.g. moving from seed bank to a plant) will have different entries in the <code>state_start</code> and <code>state_end</code> slots. It is very important to get these correct, as <code>ipmr</code> uses this information to generate the model iteration procedure automatically (i.e. code corresponding to Equations 1-2).</p>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> g_i <span class="sc">*</span> r_d,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Again, we need to add &quot;b&quot; to the states list</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>)),</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">uses_par_sets =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_cor     =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">evict_fun     =</span> <span class="fu">truncated_distributions</span>(<span class="st">&#39;norm&#39;</span>,</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;r_d&#39;</span>)</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
+<p>We’ve now defined all of the kernels, next are the implementation
+details. These also differ somewhat from simple IPMs. The key difference
+in the implementation arguments list lies in the
+<code>state_start</code> and <code>state_end</code> of each kernel, and
+is related to the <code>family</code> argument of each kernel. Kernels
+that begin with one state and end in a different state (e.g. moving from
+seed bank to a plant) will have different entries in the
+<code>state_start</code> and <code>state_end</code> slots. It is very
+important to get these correct, as <code>ipmr</code> uses this
+information to generate the model iteration procedure automatically
+(i.e. code corresponding to Equations 1-2).</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>general_ipm <span class="ot">&lt;-</span> general_ipm <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_impl</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
@@ -370,7 +656,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                            <span class="at">state_end   =</span> <span class="st">&quot;ht&quot;</span>)</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>An alternative to the list above is to use <code>make_impl_args_list()</code>. The chunk above and the chunk below generate equivalent <code>proto_ipm</code> objects.</p>
+<p>An alternative to the list above is to use
+<code>make_impl_args_list()</code>. The chunk above and the chunk below
+generate equivalent <code>proto_ipm</code> objects.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>general_ipm <span class="ot">&lt;-</span> general_ipm <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_impl</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">make_impl_args_list</span>(</span>
@@ -380,7 +668,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">state_end      =</span> <span class="fu">c</span>(<span class="st">&#39;ht&#39;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&quot;b&quot;</span>, <span class="st">&#39;ht&#39;</span>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>The rest is the same as the simple IPM. We can use our pre-defined functions in <code>make_ipm</code>, and we can use pre-defined variables in <code>define_domains</code>. We’ll create variables for the upper (<code>U</code>) and lower (<code>L</code>) size bounds for the population, and the number of meshpoints for integration (<code>n</code>). We also define initial population vectors for both <code>b</code> and <code>ht</code>.</p>
+<p>The rest is the same as the simple IPM. We can use our pre-defined
+functions in <code>make_ipm</code>, and we can use pre-defined variables
+in <code>define_domains</code>. We’ll create variables for the upper
+(<code>U</code>) and lower (<code>L</code>) size bounds for the
+population, and the number of meshpoints for integration
+(<code>n</code>). We also define initial population vectors for both
+<code>b</code> and <code>ht</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The lower and upper bounds for the continuous state variable and the number</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># of meshpoints for the midpoint rule integration. We&#39;ll also create the initial</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># population vector from a random uniform distribution</span></span>
@@ -430,12 +724,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">right_ev</span>(general_ipm)</span>
 <span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">left_ev</span>(general_ipm)</span></code></pre></div>
-<p>Our model is now built! We can explore the asymptotic population growth rate with the <code>lambda()</code> function, which will work on any object made my <code>make_ipm()</code>. The same is true for <code>is_conv_to_asymptotic()</code>, which is a helper to function to figure out if we’ve set the number of <code>iterations</code> high enough to actually reach asymptotic population dynamics. <code>left_ev</code> and <code>right_ev</code> work for general deterministic IPMs as well. Stochastic versions are in the works, but are not yet implemented.</p>
+<p>Our model is now built! We can explore the asymptotic population
+growth rate with the <code>lambda()</code> function, which will work on
+any object made my <code>make_ipm()</code>. The same is true for
+<code>is_conv_to_asymptotic()</code>, which is a helper to function to
+figure out if we’ve set the number of <code>iterations</code> high
+enough to actually reach asymptotic population dynamics.
+<code>left_ev</code> and <code>right_ev</code> work for general
+deterministic IPMs as well. Stochastic versions are in the works, but
+are not yet implemented.</p>
 </div>
 <div id="further-analysis" class="section level3">
 <h3>Further analysis</h3>
-<p>Say we wanted to calculate the mean and variance of life span conditional on initial state <span class="math inline">\(z_0\)</span>. This requires us to generate the IPM’s fundamental operator, <span class="math inline">\(N\)</span>, which is computed as follows: <span class="math inline">\(N = (I - P)^{-1}\)</span>. The following chunk is a function to compute average lifespan as a function of initial size. Note that we omit the fecundity from these calculations entirely, as our model does not assume that reproduction imposes a cost on survival.</p>
-<p>The formula for mean lifespan is given as <span class="math inline">\(\bar{\eta}(z_0) = eN\)</span> (where <span class="math inline">\(e\)</span> is a constant function such that <span class="math inline">\(e(z)\equiv1\)</span>), and the formula for its variance is <span class="math inline">\(\sigma^2_\eta(z_0) = e(2N^2-N) - (eN)^2\)</span>. Since the <span class="math inline">\(e\)</span> function has the effect of summing columns, we’ll replace that with the <em>R</em> function <code>colSums</code>. Our second function, <code>sigma_eta</code>, will make use of <code>%^%</code> from <code>ipmr</code>, which multiples matrices by themselves, rather than the point-wise power provided by <code>^</code>. More details on the math underlying these calculations are provided in Ellner, Childs, &amp; Rees (2016), chapter 3.</p>
+<p>Say we wanted to calculate the mean and variance of life span
+conditional on initial state <span class="math inline">\(z_0\)</span>.
+This requires us to generate the IPM’s fundamental operator, <span class="math inline">\(N\)</span>, which is computed as follows: <span class="math inline">\(N = (I - P)^{-1}\)</span>. The following chunk is
+a function to compute average lifespan as a function of initial size.
+Note that we omit the fecundity from these calculations entirely, as our
+model does not assume that reproduction imposes a cost on survival.</p>
+<p>The formula for mean lifespan is given as <span class="math inline">\(\bar{\eta}(z_0) = eN\)</span> (where <span class="math inline">\(e\)</span> is a constant function such that <span class="math inline">\(e(z)\equiv1\)</span>), and the formula for its
+variance is <span class="math inline">\(\sigma^2_\eta(z_0) = e(2N^2-N) -
+(eN)^2\)</span>. Since the <span class="math inline">\(e\)</span>
+function has the effect of summing columns, we’ll replace that with the
+<em>R</em> function <code>colSums</code>. Our second function,
+<code>sigma_eta</code>, will make use of <code>%^%</code> from
+<code>ipmr</code>, which multiples matrices by themselves, rather than
+the point-wise power provided by <code>^</code>. More details on the
+math underlying these calculations are provided in Ellner, Childs, &amp;
+Rees (2016), chapter 3.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>make_N <span class="ot">&lt;-</span> <span class="cf">function</span>(ipm) {</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  P     <span class="ot">&lt;-</span> ipm<span class="sc">$</span>sub_kernels<span class="sc">$</span>P</span>
@@ -474,67 +790,131 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, mean_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mesh_ps, var_l, <span class="at">type =</span> <span class="st">&quot;l&quot;</span>, <span class="at">xlab =</span> <span class="fu">expression</span>( <span class="st">&quot;Initial size z&quot;</span>[<span class="dv">0</span>]))</span></code></pre></div>
-<p>From prior knowledge, we happen to know that even in the best conditions, <em>Ligustrum obtusifolium</em> individuals usually only live 25-50 years. It appears that our model (wildly) overestimates their average lifespan, and we’d want to think about how to re-parameterize it to more accurately capture mortality events. Our survival model would seem the most likely candidate for re-examination, particularly for young and mid-sized trees. That is a problem for another day though, and so the next section will investigate how to implement general IPMs in discretely varying environments.</p>
+<p>From prior knowledge, we happen to know that even in the best
+conditions, <em>Ligustrum obtusifolium</em> individuals usually only
+live 25-50 years. It appears that our model (wildly) overestimates their
+average lifespan, and we’d want to think about how to re-parameterize it
+to more accurately capture mortality events. Our survival model would
+seem the most likely candidate for re-examination, particularly for
+young and mid-sized trees. That is a problem for another day though, and
+so the next section will investigate how to implement general IPMs in
+discretely varying environments.</p>
 </div>
 </div>
 <div id="general-models-for-discretely-varying-environments" class="section level2">
 <h2>General models for discretely varying environments</h2>
-<p>Discretely varying parameters can be used to construct general IPMs with little additional effort. These are typically the result of fitting a set of fixed effects vital rate models that include both continuous predictors for size/state and categorical variables like treatment or maturation state. They can also result from mixed effects models, for example, working with conditional modes for a random intercept corresponding to year or site.</p>
-<p><code>ipmr</code> refers to these as <em>parameter sets</em>, and abbreviates them <code>par_sets</code>. For example, a random intercept for year may be denoted <span class="math inline">\(\alpha_{yr}\)</span>, where <span class="math inline">\(_{yr}\)</span> provides an index for the different values that <span class="math inline">\(\alpha\)</span> can take on.</p>
-<p>If you’ve already read the Intro to <code>ipmr</code> article and the example above, then there aren’t any new concepts to introduce here. Below is an example showing how all of these come together.</p>
+<p>Discretely varying parameters can be used to construct general IPMs
+with little additional effort. These are typically the result of fitting
+a set of fixed effects vital rate models that include both continuous
+predictors for size/state and categorical variables like treatment or
+maturation state. They can also result from mixed effects models, for
+example, working with conditional modes for a random intercept
+corresponding to year or site.</p>
+<p><code>ipmr</code> refers to these as <em>parameter sets</em>, and
+abbreviates them <code>par_sets</code>. For example, a random intercept
+for year may be denoted <span class="math inline">\(\alpha_{yr}\)</span>, where <span class="math inline">\(_{yr}\)</span> provides an index for the different
+values that <span class="math inline">\(\alpha\)</span> can take on.</p>
+<p>If you’ve already read the Intro to <code>ipmr</code> article and the
+example above, then there aren’t any new concepts to introduce here.
+Below is an example showing how all of these come together.</p>
 <div id="mathematical-overview-of-the-example-1" class="section level3">
 <h3>Mathematical overview of the example</h3>
-<p>We’ll use a variation of the model above, simulating some random year-specific intercepts for growth and seed production. Parameters, functions, and kernels that are now time varying have a subscript <span class="math inline">\(x_{yr}\)</span> appended to them.</p>
+<p>We’ll use a variation of the model above, simulating some random
+year-specific intercepts for growth and seed production. Parameters,
+functions, and kernels that are now time varying have a subscript <span class="math inline">\(x_{yr}\)</span> appended to them.</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U P_{yr}(z&#39;, z) n(z,t)d\mathrm{z} + b(t) * \int_L^U leave\_discrete(z&#39;) \mathrm{dz&#39;}\)</span></p></li>
-<li><p><span class="math inline">\(b(t + 1) = \int_L^Ugo\_discrete_{yr}(z) n(z,t)d\mathrm{z}+ stay\_discrete\)</span></p></li>
-<li><p><span class="math inline">\(P_{yr}(z&#39;,z) = s(z) * G_{yr}(z&#39;,z)\)</span></p></li>
-<li><p><span class="math inline">\(go\_discrete_{yr}(z) = r_{s,yr}(z) * r_r(z) * g_i\)</span></p></li>
-<li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p * r_d(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t + 1) = \int_L^U
+P_{yr}(z&#39;, z) n(z,t)d\mathrm{z} + b(t) *
+leave\_discrete(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(b(t + 1) =
+\int_L^Ugo\_discrete_{yr}(z) n(z,t)d\mathrm{z}+
+stay\_discrete\)</span></p></li>
+<li><p><span class="math inline">\(P_{yr}(z&#39;,z) = s(z) *
+G_{yr}(z&#39;,z)\)</span></p></li>
+<li><p><span class="math inline">\(go\_discrete_{yr}(z) = r_{s,yr}(z) *
+r_r(z) * g_i\)</span></p></li>
+<li><p><span class="math inline">\(leave\_discrete(z&#39;) = e_p *
+r_d(z&#39;)\)</span></p></li>
 <li><p><span class="math inline">\(stay\_discrete = 0\)</span></p></li>
 </ol>
 <p>The vital rate models are as follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>survival (<code>s</code>): A logistic regression</p>
 <ul>
-<li><p>Example code: <code>glm(surv ~ ht_1, data = my_surv_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(s(z)) = \alpha_s + \beta_{s,1} * z + \beta_{s,2} * z^2\)</span></p></li>
+<li><p>Example code:
+<code>glm(surv ~ ht_1, data = my_surv_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(s(z)) =
+\alpha_s + \beta_{s,1} * z + \beta_{s,2} * z^2\)</span></p></li>
 </ul></li>
-<li><p>growth (<code>g</code>): A linear mixed effects regression. <span class="math inline">\(f_G\)</span> denotes a normal probability density function.</p>
+<li><p>growth (<code>g</code>): A linear mixed effects regression. <span class="math inline">\(f_G\)</span> denotes a normal probability density
+function.</p>
 <ul>
-<li><p>example code: <code>lmer(ht_2 ~ ht_1 + (1 | year), data = grow_data)</code></p></li>
+<li><p>example code:
+<code>lmer(ht_2 ~ ht_1 + (1 | year), data = grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(\mu_{G,yr} = \alpha_G + \alpha_{G,yr} + \beta_G * z\)</span></p></li>
-<li><p><span class="math inline">\(G_{yr}(z&#39;,z) = f_G(z&#39;, \mu_{G,yr}, \sigma_G)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_{G,yr} = \alpha_G + \alpha_{G,yr}
++ \beta_G * z\)</span></p></li>
+<li><p><span class="math inline">\(G_{yr}(z&#39;,z) = f_G(z&#39;,
+\mu_{G,yr}, \sigma_G)\)</span></p></li>
 </ul></li>
 </ul></li>
-<li><p>flowering probability (<code>r_r</code>): A logistic regression</p>
+<li><p>flowering probability (<code>r_r</code>): A logistic
+regression</p>
 <ul>
-<li><p>example code: <code>glm(repro ~ ht_1, data = my_repro_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(r_r(z)) = \alpha_{r_r} + \beta_{r_r} * z\)</span></p></li>
+<li><p>example code:
+<code>glm(repro ~ ht_1, data = my_repro_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(r_r(z)) =
+\alpha_{r_r} + \beta_{r_r} * z\)</span></p></li>
 </ul></li>
-<li><p>seed production (<code>r_s</code>): A Poisson mixed effects regression</p>
+<li><p>seed production (<code>r_s</code>): A Poisson mixed effects
+regression</p>
 <ul>
-<li><p>example code: <code>glmer(seeds ~ ht_1 + (1 | year), data = my_seed_data, family = poisson())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Log(r_{s,yr}(z)) = \alpha_{r_s} + \alpha_{r_s, yr} + \beta_{r_s} * z\)</span></p></li>
+<li><p>example code:
+<code>glmer(seeds ~ ht_1 + (1 | year), data = my_seed_data, family = poisson())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Log(r_{s,yr}(z)) =
+\alpha_{r_s} + \alpha_{r_s, yr} + \beta_{r_s} * z\)</span></p></li>
 </ul></li>
-<li><p>Recruit size distribution (<code>r_d</code>): A normal distribution (<span class="math inline">\(f_{r_d}\)</span>) with mean <code>r_d_mu</code> and standard deviation <code>r_d_sd</code>.</p>
+<li><p>Recruit size distribution (<code>r_d</code>): A normal
+distribution (<span class="math inline">\(f_{r_d}\)</span>) with mean
+<code>r_d_mu</code> and standard deviation <code>r_d_sd</code>.</p>
 <ul>
-<li><p>example code: <code>r_d_mu &lt;- mean(my_recr_data$ht_2, na.rm = TRUE)</code> and <code>r_d_sd &lt;- sd(my_recr_data$ht_2, na.rm = TRUE)</code>.</p></li>
-<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) = f_{r_d}(z&#39;, \mu_{r_d}, \sigma_{r_d})\)</span></p></li>
+<li><p>example code:
+<code>r_d_mu &lt;- mean(my_recr_data$ht_2, na.rm = TRUE)</code> and
+<code>r_d_sd &lt;- sd(my_recr_data$ht_2, na.rm = TRUE)</code>.</p></li>
+<li><p>Mathematical form: <span class="math inline">\(r_d(z&#39;) =
+f_{r_d}(z&#39;, \mu_{r_d}, \sigma_{r_d})\)</span></p></li>
 </ul></li>
-<li><p>germination (<code>g_i</code>) and establishment (<code>e_p</code>) are constants. The code below assumes we have our data in long format (each seed get its own row) and that successful germinations/establishments are coded as 1s, failures are 0s, and seeds we don’t know the fate of for whatever reason are <code>NA</code>s.</p>
+<li><p>germination (<code>g_i</code>) and establishment
+(<code>e_p</code>) are constants. The code below assumes we have our
+data in long format (each seed get its own row) and that successful
+germinations/establishments are coded as 1s, failures are 0s, and seeds
+we don’t know the fate of for whatever reason are <code>NA</code>s.</p>
 <ul>
-<li><p>example code: <code>g_i &lt;- mean(my_germ_data, na.rm = TRUE)</code> and <code>e_p &lt;- mean(my_est_data, na.rm = TRUE)</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(g_i = 0.5067, e_p = 0.15\)</span></p></li>
+<li><p>example code:
+<code>g_i &lt;- mean(my_germ_data, na.rm = TRUE)</code> and
+<code>e_p &lt;- mean(my_est_data, na.rm = TRUE)</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(g_i = 0.5067, e_p
+= 0.15\)</span></p></li>
 </ul></li>
 </ol>
 </div>
 <div id="model-parameterization" class="section level3">
 <h3>Model parameterization</h3>
-<p>In the next chunk, we’ll set up the data list with all of our constants and make sure the names are what we want them to be. This example generates intercepts for 5 years of data. This can be altered according to your own needs. Then, we’ll define a couple functions to make the vital rate expressions easier to write.</p>
-<p>A key aspect here is setting the names on the time-varying parameters in the <code>data_list</code>. We are using the form <code>&quot;g_int_year&quot;</code>, and substituting the values that <code>&quot;year&quot;</code> can take in for the actual index. These don’t need to be numbers, they can be words, letters, or some combination of the two. For this example, the years will be represented with the values <code>1:5</code>. If we wanted to denote the actual years of the censuses, we could switch <code>1:5</code> to, for example, <code>2002:2006</code>.</p>
+<p>In the next chunk, we’ll set up the data list with all of our
+constants and make sure the names are what we want them to be. This
+example generates intercepts for 5 years of data. This can be altered
+according to your own needs. Then, we’ll define a couple functions to
+make the vital rate expressions easier to write.</p>
+<p>A key aspect here is setting the names on the time-varying parameters
+in the <code>data_list</code>. We are using the form
+<code>&quot;g_int_year&quot;</code>, and substituting the values that
+<code>&quot;year&quot;</code> can take in for the actual index. These don’t need
+to be numbers, they can be words, letters, or some combination of the
+two. For this example, the years will be represented with the values
+<code>1:5</code>. If we wanted to denote the actual years of the
+censuses, we could switch <code>1:5</code> to, for example,
+<code>2002:2006</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipmr)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the initial population conditions and parameters</span></span>
@@ -591,7 +971,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>inv_logit_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(int, slope, slope_2, sv) {</span>
 <span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(int <span class="sc">+</span> slope <span class="sc">*</span> sv <span class="sc">+</span> slope_2 <span class="sc">*</span> sv <span class="sc">^</span> <span class="dv">2</span>)))</span>
 <span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Next, we will set up our sub-kernels. We’ll append the <code>_year</code> suffix to the kernel <code>name</code>, the vital rate expressions and parameter values that have time-varying components (<code>g_year</code>, <code>f_s_year</code>, <code>g_int_year</code>, <code>f_s_int_year</code>), and the call to <code>truncated_distributions</code> so that the growth kernel is correctly specified. We’ll also pass a <code>list(year = 1:5))</code> into the <code>par_set_indices</code> argument of <code>define_kernel()</code>. When building the model, <code>make_ipm()</code> automatically expands these expressions to create 5 different expressions containing the various levels of <code>year</code>.</p>
+<p>Next, we will set up our sub-kernels. We’ll append the
+<code>_year</code> suffix to the kernel <code>name</code>, the vital
+rate expressions and parameter values that have time-varying components
+(<code>g_year</code>, <code>f_s_year</code>, <code>g_int_year</code>,
+<code>f_s_int_year</code>), and the call to
+<code>truncated_distributions</code> so that the growth kernel is
+correctly specified. We’ll also pass a <code>list(year = 1:5))</code>
+into the <code>par_set_indices</code> argument of
+<code>define_kernel()</code>. When building the model,
+<code>make_ipm()</code> automatically expands these expressions to
+create 5 different expressions containing the various levels of
+<code>year</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>general_stoch_kern_ipm <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen    =</span> <span class="st">&quot;general&quot;</span>,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">di_dd      =</span> <span class="st">&quot;di&quot;</span>, </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">det_stoch  =</span> <span class="st">&quot;stoch&quot;</span>,</span>
@@ -678,7 +1069,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This kernel also doesn&#39;t get a index, because there are no varying parameters.</span></span>
 <span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&#39;leave_discrete&#39;</span>,</span>
-<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d <span class="sc">*</span> d_ht,</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d,</span>
 <span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
 <span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
 <span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> all_params,</span>
@@ -719,71 +1110,118 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit   =</span> inv_logit,</span>
 <span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>                    <span class="at">inv_logit_2 =</span> inv_logit_2)</span>
 <span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>100 isn’t too many iterations, but hopefully this demonstrates how to set up and implement such a model. There are a number of slots in the output that may be useful for further analyses.</p>
+<p>100 isn’t too many iterations, but hopefully this demonstrates how to
+set up and implement such a model. There are a number of slots in the
+output that may be useful for further analyses.</p>
 <ol style="list-style-type: decimal">
-<li><p><code>env_seq</code>: This contains a character vector which shows the sequence in which levels of the time-varying components were chosen during model iteration. We could use this reproduce the model outputs later.</p></li>
-<li><p><code>pop_state$lambda</code>: This shows the single timestep per-capita growth rates for the simulation.</p></li>
+<li><p><code>env_seq</code>: This contains a character vector which
+shows the sequence in which levels of the time-varying components were
+chosen during model iteration. We could use this to reproduce the model
+outputs later.</p></li>
+<li><p><code>pop_state$lambda</code>: This shows the single timestep
+per-capita growth rates for the simulation.</p></li>
 </ol>
-<p>Additionally, there are functions to compute the stochastic population growth rate (<span class="math inline">\(\lambda_s\)</span>, computed as <code>mean(log(pop_state$lambda))</code>, burn in can be controlled with the <code>burn_in</code> parameter), and the mean sub-kernels.</p>
+<p>Additionally, there are functions to compute the stochastic
+population growth rate (<span class="math inline">\(\lambda_s\)</span>,
+computed as <code>mean(log(pop_state$lambda))</code>, burn in can be
+controlled with the <code>burn_in</code> parameter), and the mean
+sub-kernels.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mean_kernels <span class="ot">&lt;-</span> <span class="fu">mean_kernel</span>(general_stoch_kern_ipm)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>lam_s        <span class="ot">&lt;-</span> <span class="fu">lambda</span>(general_stoch_kern_ipm, <span class="at">burn_in =</span> <span class="fl">0.15</span>) <span class="co"># Remove first 15% of iterations</span></span></code></pre></div>
 </div>
 </div>
 <div id="general-models-with-continuously-varying-environments" class="section level2">
 <h2>General models with continuously varying environments</h2>
-<p>We can also use continuously varying parameters to construct general IPMs. These are good tools for exploring the consequences of environmental variation on demographic rates. <code>ipmr</code> handles these using <code>define_env_state()</code>, which can take both functions and data and generate draws from distributions during each iteration of the model.</p>
+<p>We can also use continuously varying parameters to construct general
+IPMs. These are good tools for exploring the consequences of
+environmental variation on demographic rates. <code>ipmr</code> handles
+these using <code>define_env_state()</code>, which can take both
+functions and data and generate draws from distributions during each
+iteration of the model.</p>
 <div id="mathematical-overview" class="section level3">
 <h3>Mathematical overview</h3>
-<p>This example includes survival and growth models that make use of environmental covariates. The model can be written as:</p>
+<p>This example includes survival and growth models that make use of
+environmental covariates. The model can be written as:</p>
 <ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(n(z&#39;, t+1) = \int_L^U K(z&#39;,z, \theta)n(z,t)dz + B(t) * r_s * r_d * \int_L^Uf_{c_d}(z&#39;)dz&#39;\)</span></p></li>
-<li><p><span class="math inline">\(B(t + 1) = r_e * r_s * \int_L^U c_r(z) * c_s(z)n(z,t)dz + B(t) * r_s * r_r\)</span></p></li>
-<li><p><span class="math inline">\(K(z&#39;,z,\theta) = P(z&#39;,z,\theta) + F(z&#39;,z)\)</span></p></li>
-<li><p><span class="math inline">\(P(z&#39;,z,\theta) = s(z, \theta) * G(z&#39;,z,\theta)\)</span></p></li>
-<li><p><span class="math inline">\(F(z&#39;,z) = c_r(z) * c_s(z) * c_d(z&#39;) * (1 - r_e)\)</span></p></li>
+<li><p><span class="math inline">\(n(z&#39;, t+1) = \int_L^U K(z&#39;,z,
+\theta)n(z,t)dz + B(t) * r_s * r_d * f_{c_d}(z&#39;)\)</span></p></li>
+<li><p><span class="math inline">\(B(t + 1) = r_e * r_s * \int_L^U
+c_r(z) * c_s(z)n(z,t)dz + B(t) * r_s * r_r\)</span></p></li>
+<li><p><span class="math inline">\(K(z&#39;,z,\theta) =
+P(z&#39;,z,\theta) + F(z&#39;,z)\)</span></p></li>
+<li><p><span class="math inline">\(P(z&#39;,z,\theta) = s(z, \theta) *
+G(z&#39;,z,\theta)\)</span></p></li>
+<li><p><span class="math inline">\(F(z&#39;,z) = c_r(z) * c_s(z) *
+c_d(z&#39;) * (1 - r_e)\)</span></p></li>
 </ol>
-<p><span class="math inline">\(\theta\)</span> is a vector of time-varying environmental parameters. For this example, we’ll use a Gaussian distribution for temperature and a Gamma distribution for precipitation:</p>
+<p><span class="math inline">\(\theta\)</span> is a vector of
+time-varying environmental parameters. For this example, we’ll use a
+Gaussian distribution for temperature and a Gamma distribution for
+precipitation:</p>
 <ol start="6" style="list-style-type: decimal">
-<li><p><span class="math inline">\(\theta_t \sim Norm(\mu = 8.9, \sigma = 1.2)\)</span></p></li>
-<li><p><span class="math inline">\(\theta_p \sim Gamma(k = 1000, \beta = 2)\)</span></p></li>
+<li><p><span class="math inline">\(\theta_t \sim Norm(\mu = 8.9, \sigma
+= 1.2)\)</span></p></li>
+<li><p><span class="math inline">\(\theta_p \sim Gamma(k = 1000, \beta =
+2)\)</span></p></li>
 </ol>
-<p>Next, we’ll write out the actual vital rate functions in the model:</p>
+<p>Next, we’ll write out the actual vital rate functions in the
+model:</p>
 <ol start="8" style="list-style-type: decimal">
 <li><p>survival (<code>s</code>/<span class="math inline">\(s(z,\theta)\)</span>): a logistic regression.</p>
 <ul>
-<li><p>Example model formula: <code>glm(survival ~ size_1 + temp + precip, data = my_surv_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(s(z,\theta)) = \alpha_s + \beta_s^z * z + \beta_s^t * temp + \beta_s^p * precip\)</span></p></li>
+<li><p>Example model formula:
+<code>glm(survival ~ size_1 + temp + precip, data = my_surv_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(s(z,\theta))
+= \alpha_s + \beta_s^z * z + \beta_s^t * temp + \beta_s^p *
+precip\)</span></p></li>
 </ul></li>
-<li><p>growth (<code>g</code>, <span class="math inline">\(G(z&#39;,z,\theta)\)</span>): a linear regression with a Normal error distribution (denoted <span class="math inline">\(f_G\)</span>)</p>
+<li><p>growth (<code>g</code>, <span class="math inline">\(G(z&#39;,z,\theta)\)</span>): a linear regression
+with a Normal error distribution (denoted <span class="math inline">\(f_G\)</span>)</p>
 <ul>
-<li><p>Example model formula: <code>glm(size_2 ~ size_1 + temp + precip, data = my_grow_data)</code></p></li>
+<li><p>Example model formula:
+<code>glm(size_2 ~ size_1 + temp + precip, data = my_grow_data)</code></p></li>
 <li><p>Mathematical form:</p>
 <ul>
-<li><p><span class="math inline">\(G(z&#39;,z) = f_G(z&#39;, \mu_G(z,\theta), \sigma_G)\)</span></p></li>
-<li><p><span class="math inline">\(\mu_G(z, \theta) = \alpha_G + \beta_G^z * z + \beta_G^t * temp + \beta_G^p * precip\)</span></p></li>
+<li><p><span class="math inline">\(G(z&#39;,z) = f_G(z&#39;,
+\mu_G(z,\theta), \sigma_G)\)</span></p></li>
+<li><p><span class="math inline">\(\mu_G(z, \theta) = \alpha_G +
+\beta_G^z * z + \beta_G^t * temp + \beta_G^p * precip\)</span></p></li>
 </ul></li>
 </ul></li>
 <li><p>flower probability (<code>c_r</code>/<span class="math inline">\(c_r(z)\)</span>): A logistic regression.</p>
 <ul>
-<li><p>Example model formula: <code>glm(repro ~ size_1, data = my_repro_data, family = binomial())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Logit(c_r(z)) = \alpha_{c} + \beta_{c_r} * z\)</span></p></li>
+<li><p>Example model formula:
+<code>glm(repro ~ size_1, data = my_repro_data, family = binomial())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Logit(c_r(z)) =
+\alpha_{c} + \beta_{c_r} * z\)</span></p></li>
 </ul></li>
 <li><p>seed production (<code>c_s</code>/<span class="math inline">\(c_s(z)\)</span>: a logistic regression.</p>
 <ul>
-<li><p>Example model formula: <code>glm(flower_n ~ size_1, data = my_flower_data, family = poisson())</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(Log(c_s(z)) = \alpha_{c_s} + \beta_{c_s} * z\)</span></p></li>
+<li><p>Example model formula:
+<code>glm(flower_n ~ size_1, data = my_flower_data, family = poisson())</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(Log(c_s(z)) =
+\alpha_{c_s} + \beta_{c_s} * z\)</span></p></li>
 </ul></li>
-<li><p>recruit sizes (<code>c_d</code>/<span class="math inline">\(c_d(z&#39;)\)</span>): A Normal distribution (denoted <span class="math inline">\(f_{c_d}\)</span>)</p>
+<li><p>recruit sizes (<code>c_d</code>/<span class="math inline">\(c_d(z&#39;)\)</span>): A Normal distribution
+(denoted <span class="math inline">\(f_{c_d}\)</span>)</p>
 <ul>
-<li><p>Example code: mean (<code>c_d_mu</code>) <code>mean(my_recruit_data$size_2, na.rm = TRUE)</code> and standard deviation (<code>c_d_sd</code>) <code>sd(my_recruit_data$size_2, na.rm = TRUE)</code></p></li>
-<li><p>Mathematical form: <span class="math inline">\(c_d(z&#39;) = f_{c_d}(z&#39;, \mu_{f_d}, \sigma_{f_d})\)</span></p></li>
+<li><p>Example code: mean (<code>c_d_mu</code>)
+<code>mean(my_recruit_data$size_2, na.rm = TRUE)</code> and standard
+deviation (<code>c_d_sd</code>)
+<code>sd(my_recruit_data$size_2, na.rm = TRUE)</code></p></li>
+<li><p>Mathematical form: <span class="math inline">\(c_d(z&#39;) =
+f_{c_d}(z&#39;, \mu_{f_d}, \sigma_{f_d})\)</span></p></li>
 </ul></li>
-<li><p>Constants: Discrete stage survival (<code>r_s</code>), discrete stage entrance probability (<code>r_e</code>), discrete stage departure probability conditional on survival (<code>r_d</code>), and probability of remaining in discrete stage (<code>r_r</code>).</p></li>
+<li><p>Constants: Discrete stage survival (<code>r_s</code>), discrete
+stage entrance probability (<code>r_e</code>), discrete stage departure
+probability conditional on survival (<code>r_d</code>), and probability
+of remaining in discrete stage (<code>r_r</code>).</p></li>
 </ol>
 </div>
 <div id="model-parameterization-1" class="section level3">
 <h3>Model parameterization</h3>
-<p>First, we’ll specify the constant parameters. We keep all values related to demography in the <code>data_list</code>.</p>
+<p>First, we’ll specify the constant parameters. We keep all values
+related to demography in the <code>data_list</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipmr)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the fixed parameters in a list</span></span>
@@ -809,7 +1247,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">r_r       =</span> <span class="fl">0.2</span>,</span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">r_s       =</span> <span class="fl">0.2</span></span>
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>In addition to creating the standard <code>data_list</code>, we need to create a function to sample the environmental covariates, and a list of parameters that generate the environmental covariates. The function needs to return a named list. The names in the returned list can be referenced in vital rate expressions, kernel formulas, etc. as if we had specified them in the <code>data_list</code>. <code>make_ipm()</code> only runs the functions in <code>define_env_state()</code> once per model iteration. This ensures that parameters from joint distributions can be used consistently across kernels without losing user-any specified correlations.</p>
+<p>In addition to creating the standard <code>data_list</code>, we need
+to create a function to sample the environmental covariates, and a list
+of parameters that generate the environmental covariates. The function
+needs to return a named list. The names in the returned list can be
+referenced in vital rate expressions, kernel formulas, etc. as if we had
+specified them in the <code>data_list</code>. <code>make_ipm()</code>
+only runs the functions in <code>define_env_state()</code> once per
+model iteration. This ensures that parameters from joint distributions
+can be used consistently across kernels without losing user-any
+specified correlations.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, we create a set of environmental covariates. In this example, we use</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a normal distribution for temperature and a Gamma for precipitation. </span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -853,7 +1300,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="model-specification" class="section level3">
 <h3>Model specification</h3>
-<p>We are now ready to begin implementing the model. This next chunk should look familiar, with the caveat that we have now add the terms <code>temp</code> and <code>precip</code> to vital rates in the <code>P</code> kernel.</p>
+<p>We are now ready to begin implementing the model. This next chunk
+should look familiar, with the caveat that we have now add the terms
+<code>temp</code> and <code>precip</code> to vital rates in the
+<code>P</code> kernel.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>general_stoch_param_model <span class="ot">&lt;-</span> <span class="fu">init_ipm</span>(<span class="at">sim_gen    =</span> <span class="st">&quot;general&quot;</span>,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">di_dd      =</span> <span class="st">&quot;di&quot;</span>, </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">det_stoch  =</span> <span class="st">&quot;stoch&quot;</span>,</span>
@@ -931,7 +1381,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&quot;leave_discrete&quot;</span>,</span>
 <span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&quot;DC&quot;</span>,</span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> r_d <span class="sc">*</span> r_s <span class="sc">*</span> c_d <span class="sc">*</span> d_surf_area,</span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> r_d <span class="sc">*</span> r_s <span class="sc">*</span> c_d,</span>
 <span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_d           =</span> <span class="fu">dnorm</span>(surf_area_2, c_d_mu, c_d_sd),</span>
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> constant_params,</span>
 <span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>    <span class="at">states        =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;surf_area&quot;</span>, <span class="st">&quot;sb&quot;</span>)),</span>
@@ -962,8 +1412,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_domains</span>(</span>
 <span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a>    <span class="at">surf_area =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>)</span>
 <span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div>
-<p>Now, we need to <code>define_env_state()</code>. This consists of two parts - specifying expressions that generate environmental covariates, and supplying the information needed to evaluate those expressions. In this example, we want to use the <code>env_params</code> in <code>sample_env</code> (i.e. <code>sample_env(env_params)</code>). <code>define_env_state</code> uses the <code>data_list</code> argument to supply the <code>env_params</code>, and the call to <code>sample_env</code> goes into the <code>...</code> portion of the function. Here, we assign the result to <code>env_covs</code>. The name <code>env_covs</code> isn’t important for specifying vital rate expressions and you could call it whatever you want, but it must be named something in order to work properly. The only thing that needs to match are the names in the list that <code>sample_env</code> returns, and the names used in the vital rate expressions/kernels.</p>
-<p>Note that you can pass the <code>sample_env</code> function in either the <code>data_list</code> of <code>define_env_state()</code>, or the <code>usr_funs</code> argument of <code>make_ipm()</code>.</p>
+<p>Now, we need to <code>define_env_state()</code>. This consists of two
+parts - specifying expressions that generate environmental covariates,
+and supplying the information needed to evaluate those expressions. In
+this example, we want to use the <code>env_params</code> in
+<code>sample_env</code> (i.e. <code>sample_env(env_params)</code>).
+<code>define_env_state</code> uses the <code>data_list</code> argument
+to supply the <code>env_params</code>, and the call to
+<code>sample_env</code> goes into the <code>...</code> portion of the
+function. Here, we assign the result to <code>env_covs</code>. The name
+<code>env_covs</code> isn’t important for specifying vital rate
+expressions and you could call it whatever you want, but it must be
+named something in order to work properly. The only thing that needs to
+match are the names in the list that <code>sample_env</code> returns,
+and the names used in the vital rate expressions/kernels.</p>
+<p>Note that you can pass the <code>sample_env</code> function in either
+the <code>data_list</code> of <code>define_env_state()</code>, or the
+<code>usr_funs</code> argument of <code>make_ipm()</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In the first version, sample_env is provided in the data_list of </span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># define_env_state.</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -997,8 +1462,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_ipm</span>(<span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit  =</span> inv_logit,</span>
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sample_env =</span> sample_env),</span>
 <span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">iterate =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>           <span class="at">iterations =</span> <span class="dv">100</span>)</span></code></pre></div>
-<p>Stochastic parameter-resampled models also return an <code>env_seq</code>, but this time it will be a <code>data.frame</code> of parameter draws rather than a character vector. We can also compute mean sub-kernels and <span class="math inline">\(\lambda_s\)</span> as we did in the kernel-resampled models. This time, each mean kernel is computed as the average of each sub-kernel over the course of the simulation (i.e. mean of all <code>P</code> kernels). Some sub-kernels in our example are not time-varying - they will be numerically equivalent to the sub-kernels stored in the IPM object.</p>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>           <span class="at">iterations =</span> <span class="dv">100</span>,</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>           <span class="at">return_sub_kernels =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Stochastic parameter-resampled models also return an
+<code>env_seq</code>, but this time it will be a <code>data.frame</code>
+of parameter draws rather than a character vector. We can also compute
+mean sub-kernels and <span class="math inline">\(\lambda_s\)</span> as
+we did in the kernel-resampled models. This time, each mean kernel is
+computed as the average of each sub-kernel over the course of the
+simulation (i.e. mean of all <code>P</code> kernels). Some sub-kernels
+in our example are not time-varying - they will be numerically
+equivalent to the sub-kernels stored in the IPM object.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>env_draws  <span class="ot">&lt;-</span> general_stoch_param_ipm<span class="sc">$</span>env_seq</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mean_kerns <span class="ot">&lt;-</span> <span class="fu">mean_kernel</span>(general_stoch_param_ipm)</span>
@@ -1009,12 +1483,44 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>          general_stoch_param_ipm<span class="sc">$</span>sub_kernels<span class="sc">$</span>F_it_1,</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 </div>
+<div id="a-note-on-memory-management" class="section level3">
+<h3>A note on memory management</h3>
+<p>Longer running stochastic parameter-resampled models can take up a
+lot of space in memory when all of the sub-kernels are saved from each
+iteration. For example, running the model above for 10,000 iterations
+would result in 20,000 <span class="math inline">\(100 \times
+100\)</span> matrices, 20,000 <span class="math inline">\(1 \times
+100\)</span>/<span class="math inline">\(100 \times 1\)</span> matrices,
+and 10,000 <span class="math inline">\(1 \times 1\)</span> matrices in
+the <code>sub_kernels</code> slot of the IPM object (~16.4 GB of RAM).
+This will likely result in crashes as smaller machines run out of
+available RAM. Therefore, <code>make_ipm()</code> contains an argument
+<code>return_sub_kernels</code> for these types of models that allows
+you to switch off that behavior and conserve available RAM. By default,
+this is set to <code>FALSE</code>. If you need sub-kernels for
+downstream analyses, set this option to <code>TRUE</code> and make sure
+you have a computer with sufficient RAM (64-128 GB range is likely
+required to store all information for longer running models).</p>
+<p>These warnings also apply to <em>all</em> density dependent model
+classes and the same <code>return_sub_kernels</code> argument can be
+used for those as well.</p>
+</div>
 </div>
 <div id="code-to-construct-mega-kernels" class="section level2">
 <h2>Code to construct mega-kernels</h2>
-<p>Sometimes, we may want to work with our sub-kernels arranged into a single block kernel. This isn’t required for any of the code in <code>ipmr</code>, except for the <code>plot</code> method for <code>general_di_det</code> IPMs. Other use cases may arise for analyses not included in this package though, so below is a brief overview of how to generate those.</p>
-<p><code>make_iter_kernel()</code> takes an IPM object and a vector of symbols (for interactive use) or a character version of the expression (for programming) showing where each sub-kernel should go. It works in <strong>ROW MAJOR order</strong>. This example will use the model from the general deterministic example at the top of the article.</p>
-<p>First, re-run the model to create the IPM object (if you haven’t already).</p>
+<p>Sometimes, we may want to work with our sub-kernels arranged into a
+single block kernel. This isn’t required for any of the code in
+<code>ipmr</code>, except for the <code>plot</code> method for
+<code>general_di_det</code> IPMs. Other use cases may arise for analyses
+not included in this package though, so below is a brief overview of how
+to generate those.</p>
+<p><code>make_iter_kernel()</code> takes an IPM object and a vector of
+symbols (for interactive use) or a character version of the expression
+(for programming) showing where each sub-kernel should go. It works in
+<strong>ROW MAJOR order</strong>. This example will use the model from
+the general deterministic example at the top of the article.</p>
+<p>First, re-run the model to create the IPM object (if you haven’t
+already).</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data_list <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">g_int     =</span> <span class="fl">5.781</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">g_slope   =</span> <span class="fl">0.988</span>,</span>
@@ -1089,7 +1595,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">define_kernel</span>(</span>
 <span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">name          =</span> <span class="st">&#39;leave_discrete&#39;</span>,</span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d <span class="sc">*</span> d_ht,</span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula       =</span> e_p <span class="sc">*</span> r_d,</span>
 <span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">r_d           =</span> <span class="fu">dnorm</span>(ht_2, r_d_mu, r_d_sd),</span>
 <span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">family        =</span> <span class="st">&#39;DC&#39;</span>,</span>
 <span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_list     =</span> data_list,</span>
@@ -1119,7 +1625,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">make_ipm</span>(<span class="at">iterations =</span> <span class="dv">100</span>,</span>
 <span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a>           <span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit   =</span> inv_logit,</span>
 <span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>                           <span class="at">inv_logit_2 =</span> inv_logit_2))</span></code></pre></div>
-<p>Now, we specify which kernel belongs where in row major order, using a call to <code>c()</code>.</p>
+<p>Now, we specify which kernel belongs where in row major order, using
+a call to <code>c()</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mega_mat <span class="ot">&lt;-</span> <span class="fu">make_iter_kernel</span>(<span class="at">ipm =</span> general_ipm,</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">mega_mat =</span> <span class="fu">c</span>(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                               stay_discrete, go_discrete,</span>
@@ -1129,7 +1636,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># These values should be almost identical, so this should ~0</span></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Re</span>(<span class="fu">eigen</span>(mega_mat[[<span class="dv">1</span>]])<span class="sc">$</span>values[<span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">lambda</span>(general_ipm)</span></code></pre></div>
-<p>Say we wanted to program with this function. Passing bare expression is difficult programatically, and how to do that is not really within the scope of this vignette (though if you’re interested in learning how, <a href="https://dplyr.tidyverse.org/articles/programming.html">this</a> is a good start). <code>make_iter_kernel()</code> also accepts text strings in the same format as above.</p>
+<p>Say we wanted to program with this function. Passing bare expression
+is difficult programatically, and how to do that is not really within
+the scope of this vignette (though if you’re interested in learning how,
+<a href="https://dplyr.tidyverse.org/articles/programming.html">this</a>
+is a good start). <code>make_iter_kernel()</code> also accepts text
+strings in the same format as above.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the names of each sub_kernel</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>sub_k_nms     <span class="ot">&lt;-</span> <span class="fu">names</span>(general_ipm<span class="sc">$</span>sub_kernels)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1140,12 +1652,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Should be TRUE</span></span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(mega_mat, mega_mat_2)</span></code></pre></div>
-<p><code>make_iter_kernel()</code> can also handle cases where you need blocks of 0s or identity matrices. These are specified using <code>0</code> for 0s, and <code>I</code> for identity matrices. <code>make_iter_kernel()</code> automatically works out the correct dimensions internally, so you don’t need to worry about specifying those.</p>
-<p>Below is an example that inserts 0s and identity matrices on the off-diagonals with the <code>P</code> kernel duplicated along the diagonal.</p>
+<p><code>make_iter_kernel()</code> can also handle cases where you need
+blocks of 0s or identity matrices. These are specified using
+<code>0</code> for 0s, and <code>I</code> for identity matrices.
+<code>make_iter_kernel()</code> automatically works out the correct
+dimensions internally, so you don’t need to worry about specifying
+those.</p>
+<p>Below is an example that inserts 0s and identity matrices on the
+off-diagonals with the <code>P</code> kernel duplicated along the
+diagonal.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mega_mat <span class="ot">&lt;-</span> <span class="fu">make_iter_kernel</span>(general_ipm,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">mega_mat =</span> <span class="fu">c</span>(P, <span class="dv">0</span>, </span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                                            I, P))</span></code></pre></div>
-<p>Finally, <code>make_iter_kernel</code> supports <code>ipmr</code>’s parameter set index syntax as well, enabling us to generate a list of mega-kernels for each combination of parameter set values. We’ll re-run the <code>&quot;general_di_stoch_kern&quot;</code> example from above to demonstrate this.</p>
+<p>Finally, <code>make_iter_kernel</code> supports <code>ipmr</code>’s
+parameter set index syntax as well, enabling us to generate a list of
+mega-kernels for each combination of parameter set values. We’ll re-run
+the <code>&quot;general_di_stoch_kern&quot;</code> example from above to
+demonstrate this.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>all_g_int   <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> <span class="fl">5.781</span>, <span class="at">sd =</span> <span class="fl">0.9</span>)) </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>all_f_s_int <span class="ot">&lt;-</span> <span class="fu">as.list</span>(<span class="fu">rnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> <span class="fl">2.6204</span>, <span class="at">sd =</span> <span class="fl">0.3</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1257,11 +1780,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a>    <span class="at">usr_funs =</span> <span class="fu">list</span>(<span class="at">inv_logit   =</span> inv_logit,</span>
 <span id="cb20-110"><a href="#cb20-110" aria-hidden="true" tabindex="-1"></a>                    <span class="at">inv_logit_2 =</span> inv_logit_2)</span>
 <span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
-<p>Next, we call <code>make_iter_kernel()</code> using the kernel names like so:</p>
+<p>Next, we call <code>make_iter_kernel()</code> using the kernel names
+like so:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>block_list <span class="ot">&lt;-</span> <span class="fu">make_iter_kernel</span>(general_stoch_kern_ipm,</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">mega_mat =</span> <span class="fu">c</span>(stay_discrete, go_discrete_year,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                                              leave_discrete, P_year))</span></code></pre></div>
-<p><code>make_iter_kernel()</code> also works for simple models, but assumes that all sub-kernels are combined additively (i.e. <span class="math inline">\(K(z&#39;,z) = P(z&#39;,z) + F(&#39;z,z)\)</span>). It can handle parameter set index syntax as well, but does not require the <code>mega_mat</code> argument, and can just be called with an IPM object.</p>
+<p><code>make_iter_kernel()</code> also works for simple models, but
+assumes that all sub-kernels are combined additively (i.e. <span class="math inline">\(K(z&#39;,z) = P(z&#39;,z) + F(&#39;z,z)\)</span>).
+It can handle parameter set index syntax as well, but does not require
+the <code>mega_mat</code> argument, and can just be called with an IPM
+object.</p>
 </div>
 
 

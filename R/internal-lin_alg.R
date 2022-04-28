@@ -433,7 +433,7 @@
       out <- out[n_its, ]
     }
 
-    if(inherits(out, c('matrix', 'array'))){
+    if(inherits(out, c('matrix', 'array'))) {
 
       dimnames(out) <- list(NULL, names(lams))
 
@@ -465,7 +465,7 @@ is_square <- function(x) {
 # Checks for convergence to asymptotic dynamics. Supports either
 # lambdas computed by iteration, which
 
-.is_conv_to_asymptotic <- function(x, tol = 1e-10) {
+.is_conv_to_asymptotic <- function(x, tol = 1e-6) {
 
   # Standardize columns in case of dealing w/ population state
   # within right/left_ev. lambdas won't be affected
@@ -498,23 +498,27 @@ is_square <- function(x) {
 #' visually. \code{is_conv_to_asymptotic} checks whether
 #' \code{lambda[iterations - 1]} equals \code{lambda[iterations]} within the
 #' specified tolerance, \code{tolerance}. \code{conv_plot} plots the time series of
-#' \code{lambda} (or \code{log(lambda)}.
+#' \code{lambda} (or \code{log(lambda)}). For stochastic models, a cumulative mean of
+#' log(lambda) is used to check for convergence.
 #'
 #' @param ipm An object returned by \code{make_ipm()}.
-#' @param tolerance The tolerance for convergence.
+#' @param tolerance The tolerance for convergence in lambda or, in the case of stochastic models, the cumulative mean of log(lambda).
+#' @param burn_in The proportion of iterations to discard. Default is 0.1
+#' (i.e. first 10\% of iterations in the simulation). Ignored for deterministic models.
 #'
 #' @return \code{is_conv_to_asymptotic}: Either \code{TRUE} or \code{FALSE}.
 #' \code{conv_plot}: code{ipm} invisibly.
 #' @export
 #'
 
-is_conv_to_asymptotic <- function(ipm, tolerance) {
+is_conv_to_asymptotic <- function(ipm, tolerance, burn_in) {
   UseMethod("is_conv_to_asymptotic")
 }
 
+#' @rdname check_convergence
 #' @export
 
-is_conv_to_asymptotic.ipmr_ipm <- function(ipm, tolerance = 1e-10) {
+is_conv_to_asymptotic.ipmr_ipm <- function(ipm, tolerance = 1e-6, burn_in = 0.1) {
 
   pop_state_test <- vapply(ipm$pop_state,
                            function(x) ! any(is.na(x)),
@@ -532,12 +536,25 @@ is_conv_to_asymptotic.ipmr_ipm <- function(ipm, tolerance = 1e-10) {
 
   if(!all(is.na(unlist(lambdas)))) {
 
+    #for stochastic models, convert to cummean(log(lambda)) after removing burn_in
+    if(grepl("_stoch_", class(ipm)[1])) {
+      lambdas <- lapply(lambdas, function(x, burn_in) {
+
+        burn_ind <- seq_len(round(length(x) * burn_in))
+        temp <- x[-burn_ind]
+        #cummulative mean
+        cumsum(log(temp))/1:length(temp)
+
+      },
+      burn_in = burn_in)
+    }
+
     convs <- vapply(lambdas, function(x, tol) {
 
       end <- length(x)
       start <- end - 1
 
-      isTRUE(all.equal(x[start], x[end], tolerance = tol))
+      abs(x[start] - x[end]) <= tol
 
     },
     logical(1L),
@@ -839,13 +856,19 @@ is_conv_to_asymptotic.ipmr_ipm <- function(ipm, tolerance = 1e-10) {
 
 .thin_stoch_lambda <- function(lambdas, burn_ind, log) {
 
-  if(log) lambdas <- log(lambdas)
+  lambdas <- log(lambdas)
 
   if(length(burn_ind > 0)) {
-    out <- mean(lambdas[-c(burn_ind)])
+    out <- apply(lambdas, 2,
+                 function(x, burn_ind) mean(x[-c(burn_ind)]),
+                 burn_ind = burn_ind)
   } else {
-    out <- mean(lambdas)
+    out <- apply(lambdas, 2, mean)
   }
+
+  if(!log) out <- exp(out)
+
+  names(out) <- dimnames(lambdas)[[2]]
 
   return(out)
 }

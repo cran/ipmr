@@ -396,7 +396,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #    define_kernel(
 #      name          = "leave_sb_1",
 #      family        = "DC",
-#      formula       = s_sb1 * r_sb1 * c_d * d_z,
+#      formula       = s_sb1 * r_sb1 * c_d,
 #      c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
 #      data_list     = all_pars,
 #      states        = list(c("z", "sb1")),
@@ -407,7 +407,7 @@ all_params <- c(all_fixed_params, g_alpha_list, s_alpha_list)
 #    define_kernel(
 #      name          = "leave_sb_2",
 #      family        = "DC",
-#      formula       = s_sb2 * r_sb2 * c_d * d_z,
+#      formula       = s_sb2 * r_sb2 * c_d,
 #      c_d           = dnorm(z_2, mu_c_d, sigma_c_d),
 #      data_list     = all_pars,
 #      states        = list(c("z", "sb2")),
