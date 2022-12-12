@@ -1609,7 +1609,10 @@ plot.ipmr_matrix <- function(x = NULL, y = NULL,
 
 #' @rdname plot_star
 #' @param exponent The exponent to raise each kernel to. Setting this to a low
-#' number can help visualize kernels that are overwhelmed by a few very large numbers.
+#'   number can help visualize kernels that are overwhelmed by a few very large
+#'   numbers.
+#' @param n_row,n_col If plotting multiple (sub-)kernels, how many rows and
+#'   columns to arrange them in.
 #'
 #' @export
 
@@ -1620,6 +1623,8 @@ plot.simple_di_det_ipm <- function(x = NULL, y = NULL,
                                    do_contour = FALSE,
                                    do_legend = FALSE,
                                    exponent = 1,
+                                   n_row = 1,
+                                   n_col = 1,
                                    ...) {
 
   dots <- list(...)
@@ -1638,23 +1643,15 @@ plot.simple_di_det_ipm <- function(x = NULL, y = NULL,
 
   plot_list <- ipm$sub_kernels
 
-  plt_seq   <- seq_along(plot_list)
+  par(mar   = c(6, 2, 3, 1),
+      mfrow = c(n_row, n_col))
 
-  canvas_dims <- .ncol_nrow(plt_seq)
 
   if(do_legend) {
 
     graphics::layout(mat = cbind(matrix(1, 5, 5), rep(2, 5)))
-    par(mar = c(6, 2, 3, 1))
 
-  } else {
-
-
-    graphics::par(mar = c(6, 5, 3, 2),
-                  mfrow = c(canvas_dims$nrow,
-                            canvas_dims$ncol))
   }
-
 
   for(i in seq_along(plot_list)){
 
@@ -1685,6 +1682,8 @@ plot.simple_di_stoch_param_ipm <- function(x = NULL, y = NULL,
                                            do_contour = FALSE,
                                            do_legend = FALSE,
                                            exponent = 1,
+                                           n_row = 1,
+                                           n_col = 1,
                                            ...) {
 
   dots <- list(...)
@@ -1708,21 +1707,15 @@ plot.simple_di_stoch_param_ipm <- function(x = NULL, y = NULL,
 
   plt_seq   <- seq_along(plot_list)
 
-  canvas_dims <- .ncol_nrow(plt_seq)
+  par(mar   = c(6, 2, 3, 1),
+      mfrow = c(n_row, n_col))
+
 
   if(do_legend) {
 
     graphics::layout(mat = cbind(matrix(1, 5, 5), rep(2, 5)))
-    par(mar = c(6, 2, 3, 1))
 
-  } else {
-
-
-    graphics::par(mar = c(6, 5, 3, 2),
-                  mfrow = c(canvas_dims$nrow,
-                            canvas_dims$ncol))
   }
-
 
   for(i in seq_along(plot_list)){
 
@@ -1754,6 +1747,8 @@ plot.simple_di_stoch_kern_ipm <- function(x = NULL, y = NULL,
                                           do_contour = FALSE,
                                           do_legend = FALSE,
                                           exponent = 1,
+                                          n_row = 1,
+                                          n_col = 1,
                                           ...) {
 
   dots <- list(...)
@@ -1772,21 +1767,13 @@ plot.simple_di_stoch_kern_ipm <- function(x = NULL, y = NULL,
 
   plot_list   <- ipm$sub_kernels
 
-  plt_seq     <- seq_along(plot_list)
-
-  canvas_dims <- .ncol_nrow(plt_seq)
+  par(mar   = c(6, 2, 3, 1),
+      mfrow = c(n_row, n_col))
 
   if(do_legend) {
 
     graphics::layout(mat = cbind(matrix(1, 5, 5), rep(2, 5)))
-    par(mar = c(6, 2, 3, 1))
 
-  } else {
-
-
-    graphics::par(mar = c(6, 5, 3, 2),
-                  mfrow = c(canvas_dims$nrow,
-                            canvas_dims$ncol))
   }
 
 
@@ -1825,6 +1812,8 @@ plot.general_di_det_ipm <- function(x = NULL, y = NULL,
                                     do_contour = FALSE,
                                     do_legend = FALSE,
                                     exponent = 1,
+                                    n_row = 1,
+                                    n_col = 1,
                                     ...) {
   dots <- list(...)
 
@@ -1847,21 +1836,15 @@ plot.general_di_det_ipm <- function(x = NULL, y = NULL,
          "Please specify an expression for the 'mega_mat' argument.")
   }
 
-  plot_list <- format_mega_kernel(ipm, mega_mat = !! mega_mat)
-  plt_seq   <- seq_along(plot_list)
-  canvas_dims <- .ncol_nrow(plt_seq)
 
-  if(do_legend) {
+  graphics::par(mar   = c(6, 5, 3, 2),
+                mfrow = c(n_row, n_col))
+
+  plot_list <- format_mega_kernel(ipm, mega_mat = !! mega_mat)
+   if(do_legend) {
 
     graphics::layout(mat = cbind(matrix(1, 5, 5), rep(2, 5)))
-    par(mar = c(6, 2, 3, 1))
 
-  } else {
-
-
-    graphics::par(mar = c(6, 5, 3, 2),
-                  mfrow = c(canvas_dims$nrow,
-                            canvas_dims$ncol))
   }
 
   lapply(plot_list, function(ipm) plot.ipmr_matrix(x = x,
@@ -1889,7 +1872,7 @@ plot.general_di_det_ipm <- function(x = NULL, y = NULL,
 
   } else {
 
-    out$ncol <- out$nrow <- round(sqrt(length(plt_seq)))
+    out$ncol <- out$nrow <- ceiling(sqrt(length(plt_seq)))
 
   }
 
@@ -2690,5 +2673,32 @@ left_ev.simple_di_stoch_param_ipm <- left_ev.general_di_stoch_param_ipm
   Reduce("+", x = dots, init = 0)
 }
 
+#' @rdname as_matrix
+#' @title  Convert to bare matrices
+#' @description Converts objects to \code{c("matrix", "array")}.
+#' @param x An object of class \code{ipmr_matrix}, or the output from
+#' \code{make_ipm}.
+#' @param ... ignored.
+#'
+#' @return A matrix.
+#' @export
 
+as.matrix.ipmr_matrix <- function(x, ...) {
+
+  class(x) <- c("matrix", "array")
+
+  return(x)
+
+
+}
+
+#' @rdname as_matrix
+#' @export
+
+
+as.matrix.ipmr_ipm <- function(x, ...) {
+
+  lapply(x$sub_kernels, as.matrix)
+
+}
 

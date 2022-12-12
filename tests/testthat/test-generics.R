@@ -172,6 +172,20 @@ test_that('plot.simple_di_det returns correctly', {
 
 })
 
+test_that("as.matrix strips ipmr_ipm class effectively", {
+
+  mats <- as.matrix(sim_di_det_1)
+
+  expect_s3_class(mats[[1]], "matrix")
+  expect_false(inherits(mats[[1]], "ipmr_matrix"))
+  expect_length(mats, 2L)
+  expect_type(mats, "list")
+
+  mat_p <- as.matrix(sim_di_det_1$sub_kernels$P)
+  expect_s3_class(mat_p, "matrix")
+  expect_false(inherits(mat_p, "ipmr_matrix"))
+
+})
 
 # simple_di_stoch_kern methods --------------
 
@@ -1637,32 +1651,10 @@ test_that('left_ev.simple_di_det_ipm can re-iterate models', {
 })
 
 test_that('warnings are produced correctly', {
-
-  msg <- catch_cnd(left_ev(sim_di_det_3,
-                           iterations = 3))
-
-  expect_true(
-    grepl(
-      'did not converge after 3 iterations\\. Returning NA',
-      msg$message
-    )
-  )
-
-
-  msg <- capture_warning(
-    left_ev(sim_di_det_1,
-            iterations = 2
-    )
-  )
-
-  expect_true(
-    grepl(
-      'did not converge after 2 iterations\\. Returning NA',
-      msg$message
-    )
-  )
-
-
+  expect_snapshot({
+    . <- left_ev(sim_di_det_3, iterations = 3)
+    . <- left_ev(sim_di_det_1, iterations = 2)
+  })
 })
 
 

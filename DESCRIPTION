@@ -1,6 +1,6 @@
 Package: ipmr
 Title: Integral Projection Models
-Version: 0.0.5
+Version: 0.0.6
 Authors@R: c( 
     person(given = "Sam",
            family = "Levin",
@@ -55,14 +55,15 @@ Language: en-US
 Imports: graphics, grDevices, magrittr, methods, purrr (>= 0.3.0),
         rlang (>= 0.3.0), stats, utils, Rcpp
 Depends: R (>= 3.4)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.2
 Config/testthat/parallel: true
 Config/testthat/edition: 3
 LinkingTo: Rcpp
-URL: https://levisc8.github.io/ipmr/, https://github.com/levisc8/ipmr
-BugReports: https://github.com/levisc8/ipmr/issues
+URL: https://padrinoDB.github.io/ipmr/,
+        https://github.com/padrinoDB/ipmr
+BugReports: https://github.com/padrinoDB/ipmr/issues
 NeedsCompilation: yes
-Packaged: 2022-04-28 01:08:25 UTC; sl13sise
+Packaged: 2022-12-12 08:40:22 UTC; Sam Levin
 Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Aldo Compagnoni [aut],
   Dylan Childs [aut],
@@ -72,4 +73,4 @@ Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Eric Scott [ctb]
 Maintainer: Sam Levin <levisc8@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-04-28 13:40:08 UTC
+Date/Publication: 2022-12-12 10:40:07 UTC
