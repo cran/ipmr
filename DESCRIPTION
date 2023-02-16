@@ -1,6 +1,6 @@
 Package: ipmr
 Title: Integral Projection Models
-Version: 0.0.6
+Version: 0.0.7
 Authors@R: c( 
     person(given = "Sam",
            family = "Levin",
@@ -63,7 +63,7 @@ URL: https://padrinoDB.github.io/ipmr/,
         https://github.com/padrinoDB/ipmr
 BugReports: https://github.com/padrinoDB/ipmr/issues
 NeedsCompilation: yes
-Packaged: 2022-12-12 08:40:22 UTC; Sam Levin
+Packaged: 2023-02-16 14:02:56 UTC; sl13sise
 Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Aldo Compagnoni [aut],
   Dylan Childs [aut],
@@ -73,4 +73,4 @@ Author: Sam Levin [aut, cre] (<https://orcid.org/0000-0002-3289-9925>),
   Eric Scott [ctb]
 Maintainer: Sam Levin <levisc8@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-12-12 10:40:07 UTC
+Date/Publication: 2023-02-16 15:00:02 UTC
